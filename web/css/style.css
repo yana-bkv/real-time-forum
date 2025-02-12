@@ -1,0 +1,28 @@
+body {
+    background-color: #494545;
+    color: antiquewhite;
+    text-align: center;
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h1 {
+    padding: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: antiquewhite;
+    font-weight: bold;
+
+    border: 2px solid antiquewhite;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
+
+a:hover {
+    background-color: antiquewhite;
+    color: #494545;
+    border: 2px solid #494545;
+}

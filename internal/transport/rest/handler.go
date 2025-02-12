@@ -22,6 +22,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error: template executing", http.StatusInternalServerError)
 		log.Println(err)
 	}
+
 }
 
 // USERS
