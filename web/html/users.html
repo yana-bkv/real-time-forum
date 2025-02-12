@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forum posts</title>
+    <link rel="stylesheet" href="/web/css/style.css">
+</head>
+<body>
+<h1>Users List</h1>
+<ul>
+    {{range .}}
+    <li>ID: {{.ID}}, User name is <span>{{.Username}}</span> </li>
+    {{end}}
+</ul>
+</body>
+</html>

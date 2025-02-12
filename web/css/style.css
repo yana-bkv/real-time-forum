@@ -10,7 +10,7 @@ h1 {
     padding: 20px;
 }
 
-a {
+a, button {
     text-decoration: none;
     color: antiquewhite;
     font-weight: bold;
@@ -21,8 +21,22 @@ a {
     padding: 10px;
 }
 
-a:hover {
+a:hover, button:hover {
     background-color: antiquewhite;
     color: #494545;
     border: 2px solid #494545;
+}
+
+.form-group {
+    padding: 20px !important;
+}
+
+/*Users list*/
+li {
+    list-style-type: none; /* Removes bullet points */
+    padding: 0; /* Optional: Removes extra padding */
+    margin: 0; /* Optional: Removes extra margin */
+}
+span {
+    font-weight: bold;
 }

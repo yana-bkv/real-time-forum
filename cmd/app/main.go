@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"real-time-forum/internal/database/sqlite"
-	"real-time-forum/internal/transport/rest"
+	"real-time-forum/internal/handlers"
 )
 
 func main() {
@@ -41,10 +41,14 @@ func main() {
 		fs.ServeHTTP(w, r)
 	})))
 
-	router.HandleFunc("/", rest.IndexHandler) // login or auth
-	router.HandleFunc("/login", rest.LoginHandler)
-	router.HandleFunc("/auth", rest.CreateUserHandler)
-	//http.HandleFunc("/{username}/posts", rest.PostsHandler)
+	router.HandleFunc("/", handlers.Index) // choose login or auth
+	router.HandleFunc("/register", handlers.Register)
+	router.HandleFunc("/login", handlers.Login)
+	router.HandleFunc("/logout", handlers.Logout)
+	router.HandleFunc("/users", handlers.ShowUsers).Methods("GET")
+	router.HandleFunc("/user/{id}", handlers.ShowUser).Methods("GET")
+	router.HandleFunc("/user/{id}", handlers.DeleteUser).Methods("DELETE")
+	http.HandleFunc("/posts", handlers.PostsHandler)
 	//http.HandleFunc("/{username}/createPost", rest.CreatePostHandler)
 	//http.HandleFunc("/{username}/deletePost", rest.DeletePostHandler)
 
