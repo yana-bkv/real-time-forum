@@ -86,41 +86,42 @@ func ShowUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func LogUser(username string, password string) (string, error) {
-	rows, err := DB.Query("SELECT username, password FROM users WHERE username = ?", username)
+func CheckLogin(username string, password string) (models.User, error) {
+	rows, err := DB.Query("SELECT id, username, password FROM users WHERE username = ?", username)
 	if err != nil {
 		slog.Error("Database query error:", "error", err)
-		return "", err
+		return models.User{}, err
 	}
 	defer rows.Close()
 
 	// Check if user exists
 	if !rows.Next() {
 		slog.Warn("User not found:", "username", username)
-		return "", errors.New("user not found")
+		return models.User{}, errors.New("user not found")
 	}
 
 	// Scan the result into a variable
-	var dbUsername, dbPassword string
-	if err := rows.Scan(&dbUsername, &dbPassword); err != nil {
+	var dbID int
+	var dbUsername, dbEmail, dbPassword string
+	if err := rows.Scan(&dbID, &dbUsername, &dbEmail, &dbPassword); err != nil {
 		slog.Error("Error scanning user:", "error", err)
-		return "", err
+		return models.User{}, err
 	}
 
 	if !checkPasswordHash(password, dbPassword) {
 		err = errors.New("invalid password")
-		return "", err
+		return models.User{}, err
 	}
 
 	// Log successful retrieval
 	slog.Info("User found:", "username", dbUsername)
 
-	return dbUsername, nil
-
-	//if !ok || !handlers.CheckPasswordHash(password,user.password) {
-	//	slog.Error("Invalid username or password")
-	//	return
-	//}
+	return models.User{
+		ID:       dbID,
+		Username: dbUsername,
+		Email:    dbEmail,
+		Password: dbPassword,
+	}, nil
 }
 
 //func DeleteUser(username string) error {

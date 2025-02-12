@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"log"
 	"log/slog"
 	"net/http"
 	"real-time-forum/internal/database/sqlite"
@@ -28,14 +31,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("login")
 		password := r.FormValue("password")
 
-		user, err := sqlite.LogUser(username, password)
+		user, err := sqlite.CheckLogin(username, password)
 		if err != nil {
 			slog.Error(err.Error())
 			http.Error(w, "Failed to fetch user", http.StatusInternalServerError)
 			return
 		}
 
-		slog.Info("Successfully logged in", "input_username", username, "db_username", user) // IF USERS PASS IS CORRECT THEN REDIRECT TO
+		slog.Info("Successfully logged in", "User_name", user) // IF USERS PASS IS CORRECT THEN REDIRECT TO
+
 		http.Redirect(w, r, "/users", http.StatusSeeOther)
 	}
 
@@ -49,4 +53,12 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		//http.Redirect(w, r, "/"+username+"/posts", http.StatusSeeOther)
 	}
 	RenderTemplate("./web/html/login.html", w, nil)
+}
+
+func generateToken(length int) string {
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		log.Fatalf("Failed to generate token: %v", err)
+	}
+	return base64.URLEncoding.EncodeToString(b)
 }
