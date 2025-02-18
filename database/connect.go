@@ -33,11 +33,11 @@ func ConnectDB() {
 func CreateUser(db *sql.DB, user *models.User) error {
 	sqlStmt := `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`
 
-	if user.Name == "" {
+	if user.Username == "" {
 		return errors.New("Username is required")
 	}
 
-	result, err := db.Exec(sqlStmt, user.Name, user.Email, user.Password)
+	result, err := db.Exec(sqlStmt, user.Username, user.Email, user.Password)
 	if err != nil {
 		if isDuplicateEmailError(err) {
 			return errors.New("email already taken")
@@ -60,7 +60,7 @@ func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 	row := db.QueryRow(sqlStmt, email)
 
 	var user models.User
-	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 	row := db.QueryRow(sqlStmt, intID)
 
 	var user models.User
-	err = row.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+	err = row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
 	if err != nil {
 		return nil, err
 	}

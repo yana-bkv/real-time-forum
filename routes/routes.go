@@ -12,5 +12,5 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/user", controllers.User).Methods("GET")
 	r.HandleFunc("/api/logout", controllers.Logout).Methods("POST")
 
-	http.Handle("/", r)
+	http.Handle("/api", r)
 }

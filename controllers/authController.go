@@ -24,7 +24,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
 	user := models.User{
-		Name:     data["name"],
+		Username: data["username"],
 		Email:    data["email"],
 		Password: password,
 	}
