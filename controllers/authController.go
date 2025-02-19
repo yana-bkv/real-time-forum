@@ -90,6 +90,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "jwt",
 		Value:    token,
+		Domain:   "localhost",
+		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
 	}

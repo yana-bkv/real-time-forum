@@ -16,13 +16,6 @@ function navigate(event, path) {
     router();
 }
 
-const route = (event) => {
-    event = event || window.event;
-    event.preventDefault();
-    window.history.pushState({},"", event.target.href);
-    router()
-}
-
 const router = async () => {
     const content = document.getElementById("content");
     var path = window.location.pathname;
@@ -32,9 +25,23 @@ const router = async () => {
     const route = routes[path] || "404";
     const html = await fetch(route.template).then((res) => res.text());
     content.innerHTML = html;
+    attachNavListeners()
 }
 
-window.addEventListener("popstate", router);
-window.route = route;
-window.addEventListener("load", router);
+// Function to reattach event listeners on all navigation links
+function attachNavListeners() {
+    document.querySelectorAll("nav a").forEach(link => {
+        link.addEventListener("click", function(event) {
+            navigate(event, this.getAttribute("href"));
+        });
+    });
+}
 
+// Attach on initial load
+window.addEventListener("load", () => {
+    router();
+    attachNavListeners(); // 🔥 Attach event listeners on first load
+});
+
+window.addEventListener("popstate", router);
+document.addEventListener("DOMContentLoaded", router);
