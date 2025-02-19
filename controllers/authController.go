@@ -45,7 +45,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	// Send the received 'data' back as JSON response
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err := json.NewEncoder(w).Encode("Success"); err != nil {
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 	}
 }
