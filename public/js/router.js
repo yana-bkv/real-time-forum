@@ -1,6 +1,6 @@
 const routes = {
     "/": {
-        template: "/templates/home.html",
+        template: "/templates/posts.html",
     },
     "/login": {
         template: "/templates/login.html",
@@ -36,6 +36,36 @@ function attachNavListeners() {
         });
     });
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    checkAuth();
+    // Watch for content changes
+    const nav = document.querySelector("nav");
+
+    // MutationObserver waits for #content to change
+    const observer = new MutationObserver(() => {
+        // Check if user in logged in
+        checkAuth();
+    })
+
+    observer.observe(nav, { childList: true, subtree: true });
+
+    async function checkAuth() {
+        try {
+            const response = await fetch("http://localhost:8080/api/user", { credentials: "include" });
+            if (response.ok) {
+                document.getElementById("authorized").style.display = "block";
+                document.getElementById("unauthorized").style.display = "none";
+            } else {
+                document.getElementById("authorized").style.display = "none";
+                document.getElementById("unauthorized").style.display = "block";
+            }
+        } catch (error) {
+            console.error("Auth check failed:", error);
+        }
+    }
+})
 
 // Attach on initial load
 window.addEventListener("load", () => {

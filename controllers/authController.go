@@ -90,7 +90,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Domain:   "localhost",
+		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
@@ -135,8 +135,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Value:    "",
+		Path:     "/",
 		Expires:  time.Now().Add(-time.Hour),
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, cookie)
 	json.NewEncoder(w).Encode("Success logout")

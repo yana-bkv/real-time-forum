@@ -4,9 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // MutationObserver waits for #content to change
     const observer = new MutationObserver(() => {
-        const registerForm = document.getElementById("register-form");
-        const loginForm = document.getElementById("login-form");
-        const userHello = document.getElementById("userHello");
+        // const path = window.location.pathname.split('/').filter(Boolean).pop();
+
+        const registerForm = document.getElementById("registerForm");
+        const loginForm = document.getElementById("loginForm");
+        const hiUserP = document.getElementById("hiUser");
+        const feed = document.getElementById("feed");
 
         if (registerForm) {
             registerFormHandler(registerForm);
@@ -16,12 +19,16 @@ document.addEventListener("DOMContentLoaded", function () {
             loginFormHandler(loginForm);
         }
 
-        if (userHello) {
-            showUser(userHello);
+        if (hiUserP) {
+            showUser(hiUserP);
+        }
+
+        if (feed) {
+            postsFeed(feed);
         }
 
         // Stop observing only when both forms are found
-        if (registerForm && loginForm) {
+        if (registerForm && loginForm && hiUserP && feed) {
             observer.disconnect();
         }
     });
@@ -133,10 +140,11 @@ function showUser(element) {
                     element.textContent = "You are not logged in";
                     return;
                 }
-                throw new Error(response.status);
+                console.log("Response status" + response.status);
             }
 
             const result = await response.json();
+
             element.textContent = result.username ? `Hi ${result.username}` : "You are not logged in";
 
         } catch (error) {
@@ -144,5 +152,48 @@ function showUser(element) {
             element.textContent = "Error fetching user";
         }
    })();
+
+}
+
+async function logout() {
+    console.log("Pressed logout button");
+    const response = await fetch("http://localhost:8080/api/logout", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    });
+
+    if (!response.ok) {
+        console.log("Response status" + response.status);
+    }
+
+    const result = await response.json();
+    console.log(result);
+    location.reload();
+}
+
+function postsFeed(element) {
+    (async() => {
+        try {
+            const response = await fetch("http://localhost:8080/api/user", {credentials: "include"});
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.log("Unauthorized user");
+                    return;
+                }
+                console.log("Response status" + response.status);
+            }
+
+            const result = await response.json();
+            element.textContent = result.username ? `Posts for ${result.username}` : "You are not logged in";
+
+        } catch (error) {
+            console.log(error);
+            element.textContent = "Error fetching user";
+        }
+    })();
 
 }

@@ -9,11 +9,16 @@
     <title>Real Time Forum</title>
 </head>
 <body>
+<h1>Real Time Forum</h1>
     <nav>
-        <h1>Real Time Forum</h1>
-        <a href="/" class="navButton" onclick="navigate(event, '/')">Home</a>
-        <a href="/login" class="navButton"  onclick="navigate(event, '/login')">Login</a>
-        <a href="/register" class="navButton" onclick="navigate(event, '/register')">Register</a>
+        <div id="authorized" style="display: none">
+            <a href="/" onclick="navigate(event, '/')">Feed</a>
+            <a onclick="logout()">Logout</a>
+        </div>
+        <div id="unauthorized">
+            <a href="/login" onclick="navigate(event, '/login')">Login</a>
+            <a href="/register" onclick="navigate(event, '/register')">Register</a>
+        </div>
     </nav>
     <div id="content"></div>
     <script src="js/router.js"></script>
