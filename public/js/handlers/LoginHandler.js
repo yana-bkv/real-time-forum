@@ -28,9 +28,8 @@ export default function LoginFormHandler(element) {
                 const result = await response.json();
                 console.log("Response from server:", result);
                 if (result === "Success") {
-                    // redirect to login page after successfully registration
                     console.log("Login successfully!");
-                    window.location.href = "/";
+                    window.location.href = "/posts";
                 } else {
                     console.log("Login failed.");
                 }
