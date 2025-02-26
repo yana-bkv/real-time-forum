@@ -34,7 +34,7 @@ func CreateUser(db *sql.DB, user *models.User) error {
 	sqlStmt := SqlUserDb("createUser")
 
 	if user.Username == "" {
-		return errors.New("Username is required")
+		return errors.New("username is required")
 	}
 
 	result, err := db.Exec(sqlStmt, user.Username, user.Email, user.Password)
@@ -42,7 +42,7 @@ func CreateUser(db *sql.DB, user *models.User) error {
 		if isDuplicateEmailError(err) {
 			return errors.New("email already taken")
 		}
-		return errors.New("Error creating user")
+		return errors.New("error creating user")
 	}
 
 	// Adds id from db to json data
@@ -56,7 +56,7 @@ func CreateUser(db *sql.DB, user *models.User) error {
 }
 
 func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
-	sqlStmt := SqlUserDb("getUser")
+	sqlStmt := SqlUserDb("getUserByEmail")
 	row := db.QueryRow(sqlStmt, email)
 
 	var user models.User
