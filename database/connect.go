@@ -22,16 +22,16 @@ func ConnectDB() {
 	DB = db
 
 	// Create user table
-	sqlStmtUser := SqlUserDb()
-	_, err = db.Exec(sqlStmtUser)
+	sqlStmt := SqlUserDb("createTable")
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		log.Fatal("Error creating table", err, sqlStmtUser)
+		log.Fatal("Error creating table", err, sqlStmt)
 	}
 
 }
 
 func CreateUser(db *sql.DB, user *models.User) error {
-	sqlStmt := `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`
+	sqlStmt := SqlUserDb("createUser")
 
 	if user.Username == "" {
 		return errors.New("Username is required")
@@ -56,7 +56,7 @@ func CreateUser(db *sql.DB, user *models.User) error {
 }
 
 func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
-	sqlStmt := `SELECT id, username, email, password FROM users WHERE email = ?`
+	sqlStmt := SqlUserDb("getUser")
 	row := db.QueryRow(sqlStmt, email)
 
 	var user models.User
@@ -74,7 +74,7 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 		log.Fatal("Invalid ID format:", err)
 	}
 
-	sqlStmt := `SELECT id, username, email, password FROM users WHERE id = ?`
+	sqlStmt := SqlUserDb("getUserById")
 	row := db.QueryRow(sqlStmt, intID)
 
 	var user models.User
