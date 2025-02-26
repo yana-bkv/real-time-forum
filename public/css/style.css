@@ -6,8 +6,20 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+h1 a {
+    color: antiquewhite;
+}
+
+h1 a:hover {
+    cursor: pointer;
+    color: #dccfbd;
+}
+
 a {
     text-decoration: none;
+}
+
+nav a {
     color: #494545;
     background-color: antiquewhite;
     padding: 10px;
