@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { checkAuth, IsAuthenticated } from "./isAuthenticatedUser.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -7,6 +8,8 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
+        await checkAuth();
+        if (!IsAuthenticated) {
         return `
             <h2>Register</h2>
             <div class="register">
@@ -23,6 +26,10 @@ export default class extends AbstractView {
                     <button type="submit">Register</button>
                 </form>
             </div>
-        `;
+        `;} else {
+            return `
+            <h2>User already authenticated</h2>
+            `;
+        }
     }
 }
