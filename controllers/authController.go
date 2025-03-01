@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// for jwt token
 const SecretKey = "secret"
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -142,4 +143,31 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, cookie)
 	json.NewEncoder(w).Encode("Success logout")
+}
+
+// Return user name
+func GetUsername(w http.ResponseWriter, r *http.Request) string {
+	cookie, err := r.Cookie("jwt")
+	if err != nil {
+		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
+		return ""
+	}
+
+	token, err := jwt.ParseWithClaims(cookie.Value, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		http.Error(w, "Error creating token", http.StatusUnauthorized)
+	}
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	// Put user info to user variable from database
+	// token has user id and it finds user by its id
+	user, _ := database.GetUserById(database.DB, claims.Issuer)
+
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	}
+
+	return user.Username
 }

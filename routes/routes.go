@@ -12,5 +12,10 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/user", controllers.User).Methods("GET")
 	r.HandleFunc("/api/logout", controllers.Logout).Methods("POST")
 
+	r.HandleFunc("/api/posts", controllers.CreatePost).Methods("POST")
+	r.HandleFunc("/api/post/{id}", controllers.GetPost).Methods("GET")
+	r.HandleFunc("/api/posts", controllers.GetPosts).Methods("GET")
+	r.HandleFunc("/api/post/{id}", controllers.DeletePost).Methods("DELETE")
+
 	http.Handle("/api", r)
 }
