@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"jwt-authentication/database"
@@ -18,8 +19,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// Decode JSON request body
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	err := DecodeJson(r, w, data)
+	if err != nil {
 		return
 	}
 
@@ -31,7 +32,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err := database.CreateUser(database.DB, &user)
+	err = database.CreateUser(database.DB, &user)
 	if err != nil {
 		if err.Error() == "email already taken" {
 			http.Error(w, err.Error(), http.StatusConflict)
@@ -41,13 +42,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Example response (You can process `data` and insert it into a DB)
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-
-	// Send the received 'data' back as JSON response
-	if err := json.NewEncoder(w).Encode("Success"); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	// Encode response as JSON
+	err = EncodeJson(w, "Success")
+	if err != nil {
+		return
 	}
 }
 
@@ -55,16 +54,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// Decode JSON request body
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	err := DecodeJson(r, w, &data)
+	if err != nil {
 		return
 	}
 
-	// GET USER info BASED ON EMAIL
-	user, err := database.GetUserByEmail(database.DB, data["email"])
-	if err != nil {
-		http.Error(w, "Email not found", http.StatusNotFound)
+	if data["username"] == "" && data["email"] == "" {
+		fmt.Println(data)
+		http.Error(w, "username or email is required", http.StatusUnauthorized)
 		return
+	}
+
+	user, err := database.GetUserByUsername(database.DB, data["username"])
+	if err != nil {
+		user, err = database.GetUserByEmail(database.DB, data["email"])
+		if err != nil {
+			http.Error(w, "Email not found", http.StatusNotFound)
+			return
+		}
 	}
 
 	if user.Id == 0 {
@@ -99,13 +106,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	// Send the received 'data' back as JSON response
-	if err := json.NewEncoder(w).Encode("Success"); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	// Encode response as JSON
+	err = EncodeJson(w, "Success")
+	if err != nil {
+		return
 	}
 }
 
-func User(w http.ResponseWriter, r *http.Request) {
+func GetAuthUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("jwt")
 	if err != nil {
 		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
@@ -127,8 +135,10 @@ func User(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User not found", http.StatusNotFound)
 	}
 
-	if err := json.NewEncoder(w).Encode(user); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	// Encode response as JSON
+	err = EncodeJson(w, user)
+	if err != nil {
+		return
 	}
 }
 
@@ -146,7 +156,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 // Return user name
-func GetUsername(w http.ResponseWriter, r *http.Request) string {
+func GetUserId(w http.ResponseWriter, r *http.Request) string {
 	cookie, err := r.Cookie("jwt")
 	if err != nil {
 		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
@@ -161,13 +171,13 @@ func GetUsername(w http.ResponseWriter, r *http.Request) string {
 	}
 	claims := token.Claims.(*jwt.StandardClaims)
 
-	// Put user info to user variable from database
-	// token has user id and it finds user by its id
-	user, _ := database.GetUserById(database.DB, claims.Issuer)
+	//// Put user info to user variable from database
+	//// token has user id and it finds user by its id
+	//user, _ := database.GetUserById(database.DB, claims.Issuer)
+	//
+	//if err := json.NewEncoder(w).Encode(user); err != nil {
+	//	http.Error(w, "Error encoding response", http.StatusInternalServerError)
+	//}
 
-	if err := json.NewEncoder(w).Encode(user); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-	}
-
-	return user.Username
+	return claims.Issuer
 }

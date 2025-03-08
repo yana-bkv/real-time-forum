@@ -46,6 +46,19 @@ func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetUserByUsername(db *sql.DB, username string) (*models.User, error) {
+	sqlStmt := SqlUserDb("getUserByUsername")
+	row := db.QueryRow(sqlStmt, username)
+
+	var user models.User
+	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func GetUserById(db *sql.DB, id string) (*models.User, error) {
 	intID, err := strconv.Atoi(id)
 	if err != nil {

@@ -22,14 +22,27 @@ func ConnectDB() {
 	sqlStmtUser := SqlUserDb("createTable")
 	_, err = db.Exec(sqlStmtUser)
 	if err != nil {
-		log.Fatal("Error creating table", err, sqlStmtUser)
+		log.Fatal("Error creating user table", err, sqlStmtUser)
 	}
 
 	// Create posts table
 	sqlStmtPost := SqlPostDb("createTable")
 	_, err = db.Exec(sqlStmtPost)
 	if err != nil {
-		log.Fatal("Error creating table", err, sqlStmtPost)
+		log.Fatal("Error creating post table", err, sqlStmtPost)
 	}
 
+	// Create comments table
+	sqlStmtComment := SqlCommentDb("createTable")
+	_, err = db.Exec(sqlStmtComment)
+	if err != nil {
+		log.Fatal("Error creating comment table", err, sqlStmtComment)
+	}
+
+	// Create likes table
+	sqlStmtLike := SqlLikeDb("createTable")
+	_, err = db.Exec(sqlStmtLike)
+	if err != nil {
+		log.Fatal("Error creating like table", err, sqlStmtLike)
+	}
 }

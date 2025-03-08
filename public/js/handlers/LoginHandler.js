@@ -12,11 +12,19 @@ export default function LoginFormHandler(element) {
 
         const email = document.getElementById("emailLogin").value;
         const password = document.getElementById("passwordLogin").value;
+        var data = {}
 
-        const data = {
-            email: email,
-            password: password
-        };
+        if (email.includes("@")) {
+            data = {
+                email: email,
+                password: password
+            };
+        } else {
+            data = {
+                username: email,
+                password: password
+            };
+        }
 
         try {
             const response = await fetch("http://localhost:8080/api/login", {

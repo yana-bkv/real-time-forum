@@ -17,3 +17,21 @@ and the send it to database connect.
 In database connect we check if given info is 
 valid and send it to sqlite to insert data to db.
 
+1.03
+I created basic crud for posts
+create, find by id, find all, delete by id
+
+i need to add joins to post and user
+and represent data in one
+
+tomorrow
+now i need to add likes and comments and
+need them to interact with each other
+also maybe i need to make interaction
+between user and comments differently
+
+on monday
+i need to add cors to crud
+(only auth users can use crud for posts)
+with postman everything works,
+
