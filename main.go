@@ -40,6 +40,7 @@ func main() {
 
 	// Catch-all route to serve index.html for all non-static requests (SPA routing)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
 		// Check if the requested file exists, otherwise serve the SPA index.html
 		_, err := os.Stat("./public" + r.URL.Path)
 		if os.IsNotExist(err) {

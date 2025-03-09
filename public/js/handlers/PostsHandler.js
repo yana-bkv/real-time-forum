@@ -22,9 +22,9 @@ export default async function postsFeed(element){
             postElement.innerHTML = `
                     <h3>${post.title}</h3>
                     <p>${post.body}</p>
-                    <p>${post.time}</p> 
                     <p>${post.author_id}</p>
                     <p>Categories ${post.category}</p>
+                    <p>${post.time}</p> 
                 `;
             // Click event for each post
             postElement.addEventListener("click", () => {

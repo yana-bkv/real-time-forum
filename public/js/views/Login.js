@@ -3,8 +3,8 @@ import { checkAuth, IsAuthenticated, AuthenticatedUserName } from "./isAuthentic
 
 
 export default class extends AbstractView {
-    constructor() {
-        super();
+    constructor(params) {
+        super(params);
         this.setTitle("Login");
     }
 
