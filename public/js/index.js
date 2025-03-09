@@ -6,9 +6,10 @@ import WelcomePage from './views/WelcomePage.js';
 
 import LoginHandler from './handlers/LoginHandler.js';
 import RegisterHandler from './handlers/RegisterHandler.js';
-// import PostsHandler from './handlers/PostsHandler.js';
+import PostsHandler from './handlers/PostsHandler.js';
 import UserHandler from './handlers/UserHandler.js';
 import LogoutHandler from './handlers/LogoutHandler.js';
+import posts from "./views/Posts.js";
 
 export const NavigateTo = url => {
     console.log(`Navigating to: ${url}`); // Debugging
@@ -58,6 +59,8 @@ const router = async () => {
 
 window.addEventListener("popstate", router);
 
+let postsFetched = false; // Track if posts are already fetched
+
 document.addEventListener("DOMContentLoaded", () => {
     // Routing
     bindLinkEvents();
@@ -69,14 +72,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const observer = new MutationObserver(() => {
         const loginForm = document.getElementById("loginForm");
         const registerForm = document.getElementById("registerForm");
-        // const postForm = document.getElementById("feed");
         const userAbout = document.getElementById("userAbout");
         const logoutButton = document.getElementById("logoutButton");
+        const feed = document.getElementById("feed");
 
-        LoginHandler(loginForm);
-        RegisterHandler(registerForm);
-        UserHandler(userAbout);
-        LogoutHandler(logoutButton);
+        if (loginForm) LoginHandler(loginForm);
+        if (registerForm) RegisterHandler(registerForm);
+        if (userAbout) UserHandler(userAbout);
+        if (logoutButton) LogoutHandler(logoutButton);
+
+        // Fetch posts ONLY ONCE
+        if (feed && !postsFetched) {
+            postsFetched = true; // Mark as fetched
+            PostsHandler(feed);
+        }
+        if (!feed) { // if user goes to another page variable resets
+            postsFetched = false;
+        }
+
 
         checkAuthNav();
     })

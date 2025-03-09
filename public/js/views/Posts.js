@@ -1,6 +1,5 @@
 import AbstractView from "./AbstractView.js";
 import { checkAuth, IsAuthenticated } from "./isAuthenticatedUser.js";
-import { Post } from './Post.js';
 
 export default class extends AbstractView {
     constructor() {
@@ -12,12 +11,9 @@ export default class extends AbstractView {
         await checkAuth();
         console.log(IsAuthenticated);
         if (IsAuthenticated) {
-            const postComponent = new Post();
             return `
-                <div id="feed">
-                    <h1>Posts</h1>
-                    <Post/>
-                </div>`
+                <h1>Posts</h1>
+                <div id="feed"></div>`
         } else {
             return `
                 <h2>User is not authenticated to view posts</h2>

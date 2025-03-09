@@ -1,9 +1,32 @@
 body {
     background-color: #494545;
     color: antiquewhite;
-    text-align: center;
 
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+/* Ensure full-page height */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/*HEADER*/
+#header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#content {
+    text-align: center;
+    flex: 1;
+}
+
+h1 {
+    text-align: center;
+    margin-left: 3vw;
 }
 
 h1 a {
@@ -17,6 +40,11 @@ h1 a:hover {
 
 a {
     text-decoration: none;
+}
+
+nav {
+    margin-top: 3vh;
+    margin-right: 3vw;
 }
 
 nav a {
@@ -48,4 +76,39 @@ button:hover {
     background-color: antiquewhite;
     color: #494545;
     border: 2px solid #494545;
+}
+
+#feed {
+    display: grid;
+    place-items: center;
+}
+
+.post-item {
+    width: 30vw;
+    border: 1px solid antiquewhite;
+    padding: 20px;
+    margin: 20px 30px;
+}
+
+.post-item:hover {
+    border: 1px solid #e1d3bf;
+    color: #e1d3bf;
+    background-color: #4e4949;
+    cursor: pointer;
+}
+
+.post-item p {
+    text-align: left;
+}
+
+/*FOOTER*/
+#footer {
+    text-align: center;
+    height: 10vh;
+    border-top: 2px solid antiquewhite;
+}
+
+#footer span {
+    display: block;
+    margin-top:3vh;
 }

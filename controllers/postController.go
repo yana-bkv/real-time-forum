@@ -53,7 +53,6 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["id"]
-	fmt.Println(idStr)
 
 	// Fetch post from database
 	post, err := database.GetPostById(database.DB, idStr)
@@ -77,7 +76,6 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 func GetPosts(w http.ResponseWriter, r *http.Request) {
 	// Fetch post from database
 	posts, err := database.GetAllPosts(database.DB)
-	fmt.Println(posts)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
