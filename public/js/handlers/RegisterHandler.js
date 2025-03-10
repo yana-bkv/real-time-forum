@@ -31,8 +31,7 @@ export default function registerFormHandler(element) {
             console.log("Response from server:", result);
             if (result === "Success") {
                 console.log("Register successfully!");
-                // redirect to login page after successfully registration
-                window.location.href = "/login";
+                window.location.href = "/login"; // redirect to login page after successfully registration
             } else {
                 console.log("Register failed.");
             }

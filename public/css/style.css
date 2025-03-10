@@ -76,6 +76,7 @@ button:hover {
     background-color: antiquewhite;
     color: #494545;
     border: 2px solid #494545;
+    cursor: pointer;
 }
 
 /*POST*/
@@ -131,6 +132,16 @@ button:hover {
     font-size: 14px;
 }
 
+/*POST FORM CREATE PAGE*/
+.postFormCreate {
+    text-align: left !important;
+}
+
+.postFormCreate textarea {
+    padding: 10px;
+    width:100%;
+}
+
 /*FOOTER*/
 #footer {
     text-align: center;
@@ -141,4 +152,5 @@ button:hover {
 #footer span {
     display: block;
     margin-top:3vh;
+    margin-bottom:3vh;
 }

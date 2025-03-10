@@ -4,7 +4,7 @@ import { checkAuth, IsAuthenticated } from "./isAuthenticatedUser.js";
 export default class extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle("Posts");
+        this.setTitle("User Cabinet");
     }
 
     async getHtml() {
@@ -12,7 +12,7 @@ export default class extends AbstractView {
         if (IsAuthenticated) {
             return `
           <div id="userAbout">
-            <h1>User Info</h1>
+            <h1>Your Cabinet</h1>
             <p class="userName"></p>
             <p class="userEmail"></p>
           </div>

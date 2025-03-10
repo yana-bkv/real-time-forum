@@ -20,14 +20,14 @@ export default async function postsFeed(element){
             const postElement = document.createElement("div");
             postElement.classList.add("post-item");
             postElement.innerHTML = `
-                    <h3>${post.title}</h3>
+                    <h3 class="post-title">${post.title}</h3>
                     <p>${post.body}</p>
                     <p>${post.author_id}</p>
                     <p>Categories ${post.category}</p>
                     <p>${post.time}</p> 
                 `;
-            // Click event for each post
-            postElement.addEventListener("click", () => {
+            postElement.querySelector(".post-title").addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent bubbling up if needed
                 window.location.href = "/post/" + post.id;
             });
 

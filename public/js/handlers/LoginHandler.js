@@ -1,5 +1,3 @@
-import {NavigateTo, bindLinkEvents} from '../index.js';
-
 export default function LoginFormHandler(element) {
     if (!element) return;
 
@@ -40,8 +38,7 @@ export default function LoginFormHandler(element) {
             console.log("Response from server:", result);
             if (result === "Success") {
                 console.log("Login successfully!");
-                NavigateTo("/");
-                // window.location.href = "/login";
+                window.location.href = "/login";
             } else {
                 console.log("Login failed.");
             }
@@ -49,6 +46,5 @@ export default function LoginFormHandler(element) {
             console.error("Error:", error);
         }
 
-        bindLinkEvents();
     });
     }

@@ -29,8 +29,8 @@ export default async function showUser(element) {
             const userEmailEl = document.querySelector("p.userEmail");
 
             if (result.username) {
-                if (userNameEl) userNameEl.textContent = result.username;
-                if (userEmailEl) userEmailEl.textContent = result.email;
+                if (userNameEl) userNameEl.textContent = "Username: " + result.username;
+                if (userEmailEl) userEmailEl.textContent = "Email: " +  result.email;
             } else {
                 if (userNameEl) userNameEl.textContent = "You are not logged in";
             }

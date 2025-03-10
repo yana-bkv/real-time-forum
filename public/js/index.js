@@ -4,6 +4,7 @@ import LoginForm from './views/Login.js';
 import RegisterForm from './views/Register.js';
 import UserAbout from './views/User.js';
 import WelcomePage from './views/WelcomePage.js';
+import CreatePost from './views/CreatePost.js';
 
 import LoginHandler from './handlers/LoginHandler.js';
 import RegisterHandler from './handlers/RegisterHandler.js';
@@ -11,6 +12,7 @@ import PostsHandler from './handlers/PostsHandler.js';
 import PostHandler from './handlers/PostHandler.js';
 import UserHandler from './handlers/UserHandler.js';
 import LogoutHandler from './handlers/LogoutHandler.js';
+import CreatePostHandler from "./handlers/CreatePostHandler.js";
 
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
@@ -46,6 +48,7 @@ const router = async () => {
         { path: "/login", view: LoginForm },
         { path: "/register", view: RegisterForm },
         { path: "/user", view: UserAbout },
+        { path: "/create-post", view: CreatePost },
     ];
 
     const potentialRoutes = routes.map(route => {
@@ -85,17 +88,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const contentDiv = document.getElementById("content");
 
     const observer = new MutationObserver(() => {
+        // Authentication
         const loginForm = document.getElementById("loginForm");
         const registerForm = document.getElementById("registerForm");
-        const userAbout = document.getElementById("userAbout");
         const logoutButton = document.getElementById("logoutButton");
+        // Private info
+        const userAbout = document.getElementById("userAbout");
         const feed = document.getElementById("feed");
         const postItem = document.getElementById("separatePostItem");
+        const createPostForm = document.getElementById("postForm");
 
         if (loginForm) LoginHandler(loginForm);
         if (registerForm) RegisterHandler(registerForm);
         if (userAbout) UserHandler(userAbout);
         if (logoutButton) LogoutHandler(logoutButton);
+        if (createPostForm) CreatePostHandler(createPostForm);
 
         if (postItem && !postFetched) {
             postFetched = true;
