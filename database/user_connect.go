@@ -77,6 +77,25 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetAllUsers(db *sql.DB) ([]models.User, error) {
+	sqlStmt := SqlUserDb("getAllUsers")
+	rows, err := db.Query(sqlStmt)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		err = rows.Scan(&user.Id, &user.Username, &user.Email)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+
 // Check if error is a unique constraint violation for SQLite
 func isDuplicateEmailError(err error) bool {
 	if err != nil && err.Error() == "UNIQUE constraint failed: users.email" {

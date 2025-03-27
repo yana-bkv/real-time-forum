@@ -13,7 +13,7 @@ func Setup(r *mux.Router) {
 
 	r.HandleFunc("/api/user", controllers.GetAuthUser).Methods("GET") // Authed user
 	//r.HandleFunc("/api/user/{id}", controllers.GetUserById).Methods("GET")
-	//r.HandleFunc("/api/users", controllers.GetAllUsers).Methods("GET")
+	r.HandleFunc("/api/users", controllers.GetUsers).Methods("GET")
 
 	r.HandleFunc("/api/post", controllers.CreatePost).Methods("POST")
 	r.HandleFunc("/api/post/{id}", controllers.GetPost).Methods("GET")

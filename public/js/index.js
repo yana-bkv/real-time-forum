@@ -3,6 +3,7 @@ import PostForm from './views/Post.js';
 import LoginForm from './views/Login.js';
 import RegisterForm from './views/Register.js';
 import UserAbout from './views/User.js';
+import UsersList from "./views/UsersList.js";
 import WelcomePage from './views/WelcomePage.js';
 import CreatePost from './views/CreatePost.js';
 
@@ -11,6 +12,7 @@ import RegisterHandler from './handlers/RegisterHandler.js';
 import PostsHandler from './handlers/PostsHandler.js';
 import PostHandler from './handlers/PostHandler.js';
 import UserHandler from './handlers/UserHandler.js';
+import UsersHandler from './handlers/UsersHandler.js';
 import LogoutHandler from './handlers/LogoutHandler.js';
 import CreatePostHandler from "./handlers/CreatePostHandler.js";
 
@@ -48,6 +50,7 @@ const router = async () => {
         { path: "/login", view: LoginForm },
         { path: "/register", view: RegisterForm },
         { path: "/user", view: UserAbout },
+        { path: "/users", view: UsersList },
         { path: "/create-post", view: CreatePost },
     ];
 
@@ -78,6 +81,7 @@ window.addEventListener("popstate", router);
 
 let postsFetched = false; // Track if posts are already fetched
 let postFetched = false; // Track if posts are already fetched
+let usersFetched = false;
 
 document.addEventListener("DOMContentLoaded", () => {
     // Routing
@@ -94,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const logoutButton = document.getElementById("logoutButton");
         // Private info
         const userAbout = document.getElementById("userAbout");
+        const usersList = document.getElementById("usersList");
         const feed = document.getElementById("feed");
         const postItem = document.getElementById("separatePostItem");
         const createPostForm = document.getElementById("postForm");
@@ -101,6 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (loginForm) LoginHandler(loginForm);
         if (registerForm) RegisterHandler(registerForm);
         if (userAbout) UserHandler(userAbout);
+        if (usersList && !usersFetched) {
+            usersFetched = true;
+            UsersHandler(usersList);
+        }
         if (logoutButton) LogoutHandler(logoutButton);
         if (createPostForm) CreatePostHandler(createPostForm);
 
@@ -119,6 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (!postItem) {
             postFetched = false;
+        }
+        if (!usersList) {
+            usersFetched = false;
         }
 
         checkAuthNav();

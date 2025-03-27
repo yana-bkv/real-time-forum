@@ -20,7 +20,7 @@ func SqlUserDb(action string) string {
 	case "getUserById":
 		sqlAction = `SELECT id, username, email, password FROM users WHERE id = ?`
 	case "getAllUsers":
-		sqlAction = `SELECT id, username, email, password FROM users`
+		sqlAction = `SELECT id, username, email FROM users`
 	}
 
 	return sqlAction

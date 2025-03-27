@@ -142,6 +142,17 @@ button:hover {
     width:100%;
 }
 
+/* USERS LIST */
+#usersList {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+}
+.user-item {
+    margin: 40px 100px;
+    border: 2px solid antiquewhite;
+}
+
+
 /*FOOTER*/
 #footer {
     text-align: center;

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -180,4 +181,24 @@ func GetUserId(w http.ResponseWriter, r *http.Request) string {
 	//}
 
 	return claims.Issuer
+}
+
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	// Fetch post from database
+	users, err := database.GetAllUsers(database.DB)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Post not found", http.StatusNotFound)
+		} else {
+			fmt.Println(err, users)
+			http.Error(w, "Database error", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Encode response as JSON
+	err = EncodeJson(w, users)
+	if err != nil {
+		return
+	}
 }

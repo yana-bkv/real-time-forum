@@ -15,7 +15,7 @@ export default class extends AbstractView {
                 <div class="post-block">
                 <h1>Post</h1>
                 <div id="separatePostItem"></div>
-</div>`
+                </div>`
         } else {
             return `
                 <h2>User is not authenticated to view posts</h2>
