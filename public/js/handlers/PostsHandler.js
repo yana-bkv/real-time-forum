@@ -2,6 +2,7 @@ export default async function postsFeed(element){
     if (!element) return;
 
     try {
+
         const response = await fetch("http://localhost:8080/api/posts", {credentials: "include"});
 
         if (!response.ok) {

@@ -16,6 +16,8 @@ import UsersHandler from './handlers/UsersHandler.js';
 import LogoutHandler from './handlers/LogoutHandler.js';
 import CreatePostHandler from "./handlers/CreatePostHandler.js";
 
+import FetchComments from './handlers/CommentHandler.js';
+
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
 const getParams = match => {
@@ -31,6 +33,7 @@ export const NavigateTo = url => {
     console.log(`Navigating to: ${url}`); // Debugging
 
     history.pushState(null, null, url);
+    window.scrollTo(0, 0);
     router();
 }
 
@@ -67,6 +70,7 @@ const router = async () => {
     if (!match) {
         setTimeout(() => {
             console.log('No match found!');
+            document.querySelector("#content").innerHTML = "<h2>404 - Page Not Found</h2>";
             // navigateTo("/posts");
         }, 2000);
         return;
@@ -79,9 +83,11 @@ const router = async () => {
 
 window.addEventListener("popstate", router);
 
-let postsFetched = false; // Track if posts are already fetched
-let postFetched = false; // Track if posts are already fetched
-let usersFetched = false;
+const fetchedFlags = {
+    posts: false,
+    post: false,
+    users: false,
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     // Routing
@@ -106,32 +112,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (loginForm) LoginHandler(loginForm);
         if (registerForm) RegisterHandler(registerForm);
         if (userAbout) UserHandler(userAbout);
-        if (usersList && !usersFetched) {
-            usersFetched = true;
-            UsersHandler(usersList);
-        }
         if (logoutButton) LogoutHandler(logoutButton);
         if (createPostForm) CreatePostHandler(createPostForm);
 
-        if (postItem && !postFetched) {
-            postFetched = true;
-            PostHandler(postItem)
-        }
-
-        // Fetch posts ONLY ONCE
-        if (feed && !postsFetched) {
-            postsFetched = true; // Mark as fetched
+        if (feed && !fetchedFlags.posts) {
+            fetchedFlags.posts = true;
             PostsHandler(feed);
         }
-        if (!feed) { // if user goes to another page variable resets
-            postsFetched = false;
+        if (!feed) fetchedFlags.posts = false;
+
+        if (postItem && !fetchedFlags.post) {
+            fetchedFlags.post = true;
+            PostHandler(postItem);
+            FetchComments();
         }
-        if (!postItem) {
-            postFetched = false;
+        if (!postItem) fetchedFlags.post = false;
+
+        if (usersList && !fetchedFlags.users) {
+            fetchedFlags.users = true;
+            UsersHandler(usersList);
         }
-        if (!usersList) {
-            usersFetched = false;
-        }
+        if (!usersList) fetchedFlags.users = false;
 
         checkAuthNav();
     })
