@@ -1,15 +1,16 @@
-package database
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	"jwt-authentication/database"
 	"jwt-authentication/models"
 	"log"
 	"strconv"
 )
 
 func CreateUser(db *sql.DB, user *models.User) error {
-	sqlStmt := SqlUserDb("createUser")
+	sqlStmt := database.SqlUserDb("createUser")
 
 	if user.Username == "" {
 		return errors.New("username is required")
@@ -34,7 +35,7 @@ func CreateUser(db *sql.DB, user *models.User) error {
 }
 
 func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
-	sqlStmt := SqlUserDb("getUserByEmail")
+	sqlStmt := database.SqlUserDb("getUserByEmail")
 	row := db.QueryRow(sqlStmt, email)
 
 	var user models.User
@@ -47,7 +48,7 @@ func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 }
 
 func GetUserByUsername(db *sql.DB, username string) (*models.User, error) {
-	sqlStmt := SqlUserDb("getUserByUsername")
+	sqlStmt := database.SqlUserDb("getUserByUsername")
 	row := db.QueryRow(sqlStmt, username)
 
 	var user models.User
@@ -65,7 +66,7 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 		log.Fatal("Invalid ID format:", err)
 	}
 
-	sqlStmt := SqlUserDb("getUserById")
+	sqlStmt := database.SqlUserDb("getUserById")
 	row := db.QueryRow(sqlStmt, intID)
 
 	var user models.User
@@ -78,7 +79,7 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 }
 
 func GetAllUsers(db *sql.DB) ([]models.User, error) {
-	sqlStmt := SqlUserDb("getAllUsers")
+	sqlStmt := database.SqlUserDb("getAllUsers")
 	rows, err := db.Query(sqlStmt)
 	if err != nil {
 		return nil, err

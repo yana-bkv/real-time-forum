@@ -8,6 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
+	"jwt-authentication/repositories"
 	"net/http"
 	"strconv"
 	"time"
@@ -33,7 +34,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = database.CreateUser(database.DB, &user)
+	err = repositories.CreateUser(database.DB, &user)
 	if err != nil {
 		if err.Error() == "email already taken" {
 			http.Error(w, err.Error(), http.StatusConflict)
@@ -66,9 +67,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := database.GetUserByUsername(database.DB, data["username"])
+	user, err := repositories.GetUserByUsername(database.DB, data["username"])
 	if err != nil {
-		user, err = database.GetUserByEmail(database.DB, data["email"])
+		user, err = repositories.GetUserByEmail(database.DB, data["email"])
 		if err != nil {
 			http.Error(w, "Email not found", http.StatusNotFound)
 			return
@@ -131,7 +132,7 @@ func GetAuthUser(w http.ResponseWriter, r *http.Request) {
 
 	// Put user info to user variable from database
 	// token has user id and it finds user by its id
-	user, err := database.GetUserById(database.DB, claims.Issuer)
+	user, err := repositories.GetUserById(database.DB, claims.Issuer)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 	}
@@ -185,7 +186,7 @@ func GetUserId(w http.ResponseWriter, r *http.Request) string {
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	// Fetch post from database
-	users, err := database.GetAllUsers(database.DB)
+	users, err := repositories.GetAllUsers(database.DB)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)

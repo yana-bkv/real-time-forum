@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
+	"jwt-authentication/repositories"
 	"net/http"
 	"strconv"
 	"time"
@@ -36,7 +37,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = database.CreatePost(database.DB, &post)
+	err = repositories.CreatePost(database.DB, &post)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -55,7 +56,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	idStr := vars["id"]
 
 	// Fetch post from database
-	post, err := database.GetPostById(database.DB, idStr)
+	post, err := repositories.GetPostById(database.DB, idStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -75,7 +76,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
 	// Fetch post from database
-	posts, err := database.GetAllPosts(database.DB)
+	posts, err := repositories.GetAllPosts(database.DB)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -100,7 +101,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(idStr)
 
 	// Fetch post from database
-	err := database.DeletePost(database.DB, idStr)
+	err := repositories.DeletePost(database.DB, idStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)

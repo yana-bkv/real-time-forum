@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
+	"jwt-authentication/repositories"
 	"net/http"
 	"strconv"
 	"time"
@@ -44,7 +45,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = database.CreateComment(database.DB, &comment)
+	err = repositories.CreateComment(database.DB, &comment)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -68,7 +69,7 @@ func GetCommentsByPostId(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	comments, err := database.GetCommentsByPost(database.DB, id)
+	comments, err := repositories.GetCommentsByPost(database.DB, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)
@@ -98,7 +99,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	err = database.DeleteComment(database.DB, id)
+	err = repositories.DeleteComment(database.DB, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)

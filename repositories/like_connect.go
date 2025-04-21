@@ -1,14 +1,15 @@
-package database
+package repositories
 
 import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"jwt-authentication/database"
 	"jwt-authentication/models"
 )
 
 func AddLike(db *sql.DB, like *models.Like) error {
-	sqlStmt := SqlLikeDb("addLike")
+	sqlStmt := database.SqlLikeDb("addLike")
 
 	result, err := db.Exec(sqlStmt, like.PostId, like.AuthorId)
 	if err != nil {
@@ -27,7 +28,7 @@ func AddLike(db *sql.DB, like *models.Like) error {
 }
 
 func GetLikes(db *sql.DB, likeByPostId int) (*[]models.Like, error) {
-	sqlStmt := SqlLikeDb("getLikesByPostId")
+	sqlStmt := database.SqlLikeDb("getLikesByPostId")
 	rows, err := db.Query(sqlStmt, likeByPostId)
 	if err != nil {
 		return nil, err
@@ -47,7 +48,7 @@ func GetLikes(db *sql.DB, likeByPostId int) (*[]models.Like, error) {
 }
 
 func DeleteLike(db *sql.DB, likeByPostId int) error {
-	sqlStmt := SqlLikeDb("deleteLike")
+	sqlStmt := database.SqlLikeDb("deleteLike")
 
 	result, err := db.Exec(sqlStmt, likeByPostId)
 	if err != nil {

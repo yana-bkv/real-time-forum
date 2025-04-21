@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
+	"jwt-authentication/repositories"
 	"net/http"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func AddLike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = database.AddLike(database.DB, &like)
+	err = repositories.AddLike(database.DB, &like)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +58,7 @@ func GetLikes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	likes, err := database.GetLikes(database.DB, id)
+	likes, err := repositories.GetLikes(database.DB, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Like not found", http.StatusNotFound)
@@ -86,7 +87,7 @@ func DeleteLike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	err = database.DeleteLike(database.DB, id)
+	err = repositories.DeleteLike(database.DB, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)

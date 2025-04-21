@@ -1,14 +1,15 @@
-package database
+package repositories
 
 import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"jwt-authentication/database"
 	"jwt-authentication/models"
 )
 
 func CreateComment(db *sql.DB, comment *models.Comment) error {
-	sqlStmt := SqlCommentDb("createComment")
+	sqlStmt := database.SqlCommentDb("createComment")
 
 	if comment.Body == "" {
 		return errors.New("body is required")
@@ -31,7 +32,7 @@ func CreateComment(db *sql.DB, comment *models.Comment) error {
 }
 
 func GetCommentsByPost(db *sql.DB, id int) (*[]models.Comment, error) {
-	sqlStmt := SqlCommentDb("getCommentsByPostId")
+	sqlStmt := database.SqlCommentDb("getCommentsByPostId")
 	rows, err := db.Query(sqlStmt, id)
 	if err != nil {
 		return nil, err
@@ -51,7 +52,7 @@ func GetCommentsByPost(db *sql.DB, id int) (*[]models.Comment, error) {
 }
 
 func DeleteComment(db *sql.DB, id int) error {
-	sqlStmt := SqlCommentDb("deleteComment")
+	sqlStmt := database.SqlCommentDb("deleteComment")
 
 	result, err := db.Exec(sqlStmt, id)
 	if err != nil {

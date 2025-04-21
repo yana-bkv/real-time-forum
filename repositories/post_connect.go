@@ -1,15 +1,16 @@
-package database
+package repositories
 
 import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"jwt-authentication/database"
 	"jwt-authentication/models"
 	"strconv"
 )
 
 func CreatePost(db *sql.DB, post *models.Post) error {
-	sqlStmt := SqlPostDb("createPost")
+	sqlStmt := database.SqlPostDb("createPost")
 
 	if post.Title == "" && post.Body == "" {
 		return errors.New("title and body are required")
@@ -38,7 +39,7 @@ func GetPostById(db *sql.DB, id string) (*models.Post, error) {
 		return nil, errors.New("invalid post ID")
 	}
 
-	sqlStmt := SqlPostDb("getPostById")
+	sqlStmt := database.SqlPostDb("getPostById")
 	row := db.QueryRow(sqlStmt, intID)
 
 	var post models.Post
@@ -51,7 +52,7 @@ func GetPostById(db *sql.DB, id string) (*models.Post, error) {
 }
 
 func GetAllPosts(db *sql.DB) ([]models.Post, error) {
-	sqlStmt := SqlPostDb("getAllPosts")
+	sqlStmt := database.SqlPostDb("getAllPosts")
 	rows, err := db.Query(sqlStmt)
 	if err != nil {
 		return nil, err
@@ -75,7 +76,7 @@ func DeletePost(db *sql.DB, id string) error {
 		return errors.New("invalid post ID")
 	}
 
-	sqlStmt := SqlPostDb("deletePost")
+	sqlStmt := database.SqlPostDb("deletePost")
 
 	result, err := db.Exec(sqlStmt, intID)
 	if err != nil {
