@@ -1,29 +1,27 @@
+import {api} from '../../api/posts.js';
+import {api as apiUser} from "../../api/users.js";
+
 export default async function postsFeed(element){
     if (!element) return;
 
     try {
+        const users = await apiUser.getUsers();
+        const userMap = Object.fromEntries(users.map(user => [user.id, user.username]));
 
-        const response = await fetch("http://localhost:8080/api/posts", {credentials: "include"});
+        const result = await api.getPosts();
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                console.log("Unauthorized user");
-                return;
-            }
-            console.log("Response status" + response.status);
-            return
-        }
 
-        const result = await response.json();
         element.innerHTML = "";
 
         result.forEach(post => {
+            const authorName = userMap[post.author_id] || 'Unknown';
+
             const postElement = document.createElement("div");
             postElement.classList.add("post-item");
             postElement.innerHTML = `
                     <h3 class="post-title">${post.title}</h3>
                     <p>${post.body}</p>
-                    <p>${post.author_id}</p>
+                    <p>${authorName}</p>
                     <p>Categories ${post.category}</p>
                     <p>${post.time}</p> 
                 `;

@@ -1,3 +1,5 @@
+import {api} from '../../api/users.js';
+
 export default function LoginFormHandler(element) {
     if (!element) return;
 
@@ -25,23 +27,9 @@ export default function LoginFormHandler(element) {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/api/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
-                credentials: "include"
-            });
+            await api.loginUser(data);
 
-            const result = await response.json();
-            console.log("Response from server:", result);
-            if (result === "Success") {
-                console.log("Login successfully!");
-                window.location.href = "/login";
-            } else {
-                console.log("Login failed.");
-            }
+            window.location.href = "/login";
         } catch (error) {
             console.error("Error:", error);
         }

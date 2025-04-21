@@ -1,3 +1,5 @@
+import {api} from '../../api/posts.js';
+
 export default function CreatePostHandler(element) {
     if (!element) return;
 
@@ -17,23 +19,9 @@ export default function CreatePostHandler(element) {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/post", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
-                credentials: "include"
-            });
-
-            const result = await response.json();
-            console.log("Response from server:", result);
-            if (response.ok) {
-                console.log("Post successfully created!");
-                window.location.href = "/posts";
-            } else {
-                console.log("Post creation failed.");
-            }
+            const result = await api.createPost(data);
+            console.log("Post successfully created", result);
+            window.location.href = "/posts";
         } catch (error) {
             console.error("Error:", error);
         }

@@ -7,16 +7,16 @@ import UsersList from "./views/UsersList.js";
 import WelcomePage from './views/WelcomePage.js';
 import CreatePost from './views/CreatePost.js';
 
-import LoginHandler from './handlers/LoginHandler.js';
-import RegisterHandler from './handlers/RegisterHandler.js';
-import PostsHandler from './handlers/PostsHandler.js';
-import PostHandler from './handlers/PostHandler.js';
-import UserHandler from './handlers/UserHandler.js';
-import UsersHandler from './handlers/UsersHandler.js';
-import LogoutHandler from './handlers/LogoutHandler.js';
-import CreatePostHandler from "./handlers/CreatePostHandler.js";
+import LoginHandler from './handlers/auth/LoginHandler.js';
+import RegisterHandler from './handlers/auth/RegisterHandler.js';
+import PostsHandler from './handlers/post/PostsHandler.js';
+import PostHandler from './handlers/post/PostHandler.js';
+import UserHandler from './handlers/user/UserHandler.js';
+import UsersHandler from './handlers/user/UsersHandler.js';
+import LogoutHandler from './handlers/auth/LogoutHandler.js';
+import CreatePostHandler from "./handlers/post/CreatePostHandler.js";
 
-import FetchComments from './handlers/CommentHandler.js';
+import FetchComments from './handlers/comment/CommentHandler.js';
 
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
@@ -89,6 +89,31 @@ const fetchedFlags = {
     users: false,
 };
 
+// Массив конфигураций обработчиков
+const handlers = [
+    { id: "loginForm", handler: LoginHandler },
+    { id: "registerForm", handler: RegisterHandler },
+    { id: "logoutButton", handler: LogoutHandler },
+    { id: "userAbout", handler: UserHandler },
+    { id: "postForm", handler: CreatePostHandler },
+    { id: "feed", handler: PostsHandler, flag: "posts" },
+    { id: "separatePostItem", handler: PostHandler, flag: "post", extra: FetchComments },
+    { id: "usersList", handler: UsersHandler, flag: "users" },
+];
+
+// Универсальная функция подключения обработчиков
+function attachHandler(id, handler, flag, extraFn) {
+    const element = document.getElementById(id);
+
+    if (element && (!flag || !fetchedFlags[flag])) {
+        if (flag) fetchedFlags[flag] = true;
+        handler(element);
+        if (extraFn) extraFn();
+    } else if (!element && flag) {
+        fetchedFlags[flag] = false;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Routing
     bindLinkEvents();
@@ -99,40 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const observer = new MutationObserver(() => {
         // Authentication
-        const loginForm = document.getElementById("loginForm");
-        const registerForm = document.getElementById("registerForm");
-        const logoutButton = document.getElementById("logoutButton");
-        // Private info
-        const userAbout = document.getElementById("userAbout");
-        const usersList = document.getElementById("usersList");
-        const feed = document.getElementById("feed");
-        const postItem = document.getElementById("separatePostItem");
-        const createPostForm = document.getElementById("postForm");
-
-        if (loginForm) LoginHandler(loginForm);
-        if (registerForm) RegisterHandler(registerForm);
-        if (userAbout) UserHandler(userAbout);
-        if (logoutButton) LogoutHandler(logoutButton);
-        if (createPostForm) CreatePostHandler(createPostForm);
-
-        if (feed && !fetchedFlags.posts) {
-            fetchedFlags.posts = true;
-            PostsHandler(feed);
-        }
-        if (!feed) fetchedFlags.posts = false;
-
-        if (postItem && !fetchedFlags.post) {
-            fetchedFlags.post = true;
-            PostHandler(postItem);
-            FetchComments();
-        }
-        if (!postItem) fetchedFlags.post = false;
-
-        if (usersList && !fetchedFlags.users) {
-            fetchedFlags.users = true;
-            UsersHandler(usersList);
-        }
-        if (!usersList) fetchedFlags.users = false;
+        handlers.forEach(({ id, handler, flag, extra }) =>
+            attachHandler(id, handler, flag, extra)
+        );
 
         checkAuthNav();
     })

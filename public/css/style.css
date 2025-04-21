@@ -155,6 +155,7 @@ button:hover {
 
 /*FOOTER*/
 #footer {
+    margin-top: 20px;
     text-align: center;
     height: 10vh;
     border-top: 2px solid antiquewhite;

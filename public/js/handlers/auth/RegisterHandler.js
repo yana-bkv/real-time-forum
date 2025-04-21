@@ -1,3 +1,5 @@
+import {api} from "../../api/users.js";
+
 export default function registerFormHandler(element) {
     if (!element) return;
 
@@ -19,22 +21,8 @@ export default function registerFormHandler(element) {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-            console.log("Response from server:", result);
-            if (result === "Success") {
-                console.log("Register successfully!");
-                window.location.href = "/login"; // redirect to login page after successfully registration
-            } else {
-                console.log("Register failed.");
-            }
+            await api.registerUser(data);
+            window.location.href = "/login";
         } catch (error) {
             console.error("Error:", error);
         }

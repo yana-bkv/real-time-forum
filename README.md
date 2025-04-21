@@ -30,8 +30,21 @@ need them to interact with each other
 also maybe i need to make interaction
 between user and comments differently
 
-on monday
-i need to add cors to crud
-(only auth users can use crud for posts)
-with postman everything works,
+
+.........................
+restructure front files/folders
+
+add api fetch to handlers 
+change /views folder
+
+add tags 
+show comments correctly
+
+tests
+messenger
+
+docker 
+documentation
+
+
 

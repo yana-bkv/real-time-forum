@@ -1,29 +1,12 @@
+import {api} from '../../api/users.js';
+
 export default async function showUser(element) {
     if (!element) return;
 
     console.log("User page loaded");
 
         try {
-            const response = await fetch("http://localhost:8080/api/user", {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include"
-            });
-
-            console.log("Fetching user data...");
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    console.log("Unauthorized user");
-                    return;
-                }
-                console.log("Response status" + response.status);
-                element.textContent = "Error fetching user";
-                return;
-            }
-
-            const result = await response.json();
+            const result = await api.getAuthUser();
 
             const userNameEl = document.querySelector("p.userName");
             const userEmailEl = document.querySelector("p.userEmail");
