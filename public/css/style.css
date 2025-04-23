@@ -100,9 +100,12 @@ button:hover {
     margin: 20px 30px;
 }
 
+.post-item h3 {
+    border-bottom: 1px solid antiquewhite;
+}
+
 .post-item h3:hover {
-    color: #494545;
-    text-shadow: 2px 2px 3px antiquewhite, -2px -2px 3px antiquewhite;
+    color: #afa7a2;
     cursor: pointer;
 }
 
@@ -151,17 +154,6 @@ button:hover {
     width:100%;
 }
 
-/* USERS LIST */
-#usersList {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-}
-.user-item {
-    margin: 40px 100px;
-    border: 2px solid antiquewhite;
-}
-
-
 /*FOOTER*/
 #footer {
     margin-top: 20px;
@@ -187,7 +179,18 @@ button:hover {
     max-width: 100%;
 }
 
-/*USERS PAGE*/
+/* USERS LIST PAGE */
+#usersList {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+}
+.user-item {
+    margin: 40px 50px;
+    box-shadow: 2px 4px 8px rgb(234, 208, 171);
+    border-radius: 15px;
+    padding: 20px;
+}
+
 .user-item a {
     text-decoration: none;
     color: #ead0ab;
@@ -196,8 +199,4 @@ button:hover {
 .user-item a:hover {
     text-decoration: underline;
     color: #e1d3bf;
-}
-
-.user-item {
-    padding: 10px;
 }

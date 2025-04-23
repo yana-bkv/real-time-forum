@@ -51,7 +51,7 @@ func main() {
 			frontendHandler.ServeHTTP(w, r)
 		}
 	})
-
+	
 	// Start the frontend server
 	fmt.Println("Frontend server running on http://localhost" + frontendPort)
 	log.Fatal(http.ListenAndServe(frontendPort, nil))

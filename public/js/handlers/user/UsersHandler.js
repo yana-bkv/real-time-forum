@@ -1,7 +1,10 @@
 import {api} from "../../api/users.js";
+import {authService} from "../../helpers/AuthServiceCheck.js";
 
 export default async function showUsers(element) {
     if (!element) return;
+
+    const authUser = authService.getUsername();
 
     console.log("Users list page loaded");
 
@@ -18,7 +21,7 @@ export default async function showUsers(element) {
                     <p>User email: ${user.email}</p>
                     <p>User id: ${user.id}</p>
                     <p>Online status: </p>
-                    <a href="/${user.username}">Send a message</a>
+                    <a href="/ws/${authUser}/${user.username}">Send a message</a>
                 `;
             userElement.querySelector(".user-name").addEventListener("click", (event) => {
                 event.stopPropagation(); // Prevent bubbling up if needed

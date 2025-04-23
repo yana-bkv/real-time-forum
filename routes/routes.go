@@ -30,14 +30,8 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/post/{id}/like/{lId}", controllers.DeleteLike).Methods("DELETE")
 
 	// websocket
-	hub := websocket.NewHub()
-	go hub.Run()
-
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		// Получи userID из сессии, куки или токена
-		userID := r.Header.Get("X-User-ID") // пример
-		websocket.ServeWs(hub, w, r, userID)
-	})
+	r.HandleFunc("/ws/{user}/{peer}", websocket.ServeWs)
+	go websocket.HubInstance.Run()
 
 	http.Handle("/api", r)
 }

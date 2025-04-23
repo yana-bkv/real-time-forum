@@ -1,32 +1,36 @@
 package websocket
 
 import (
+	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 )
 
 var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true // allow connection to all path
-	},
+	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID string) {
-	conn, err := upgrader.Upgrade(w, r, nil) // switch http to ws
+func ServeWs(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID := vars["user"]
+	peerID := vars["peer"]
+
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Upgrade error:", err)
 		return
 	}
 
-	client := &Client{ // create instance of a client by interface
-		hub:    hub,
-		conn:   conn,
-		send:   make(chan []byte, 256),
-		userID: userID,
+	client := &Client{
+		ID:     userID,
+		PeerID: peerID,
+		Conn:   conn,
+		Send:   make(chan []byte, 256),
 	}
 
-	hub.register <- client
+	HubInstance.Register <- client
 
 	go client.writePump()
 	go client.readPump()
@@ -34,27 +38,51 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID string) {
 
 func (c *Client) readPump() {
 	defer func() {
-		c.hub.unregister <- c
-		c.conn.Close()
+		// Закрытие соединения и удаление клиента из хаба
+		if err := recover(); err != nil {
+			log.Printf("Error during readPump: %v", err)
+		}
+		HubInstance.Unregister <- c
+		c.Conn.Close()
 	}()
+
 	for {
-		_, message, err := c.conn.ReadMessage()
+		// Чтение сообщения
+		_, message, err := c.Conn.ReadMessage()
 		if err != nil {
-			log.Println("read error:", err)
+			// Логируем ошибку при чтении
+			log.Printf("Error reading message from client %s: %v", c.ID, err)
 			break
 		}
-		// Можно обогатить message, добавить userID
-		c.hub.broadcast <- message
+
+		// Отправка сообщения в Broadcast канал
+		err = sendMessageToBroadcast(c, message)
+		if err != nil {
+			log.Printf("Error broadcasting message from %s: %v", c.ID, err)
+			break
+		}
+	}
+}
+
+// Функция для отправки сообщения в Broadcast канал с обработкой ошибок
+func sendMessageToBroadcast(c *Client, message []byte) error {
+	// Проверка на наличие получателя
+	if receiver, ok := HubInstance.Clients[c.PeerID]; ok {
+		receiver.Send <- message
+		log.Printf("Message from %s to %s: %s", c.ID, c.PeerID, string(message))
+		return nil
+	} else {
+		log.Printf("Receiver %s not found in clients map", c.PeerID)
+		return fmt.Errorf("receiver not found")
 	}
 }
 
 func (c *Client) writePump() {
-	defer c.conn.Close()
-	for msg := range c.send {
-		err := c.conn.WriteMessage(websocket.TextMessage, msg)
+	for msg := range c.Send {
+		err := c.Conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
-			log.Println("write error:", err)
 			break
 		}
 	}
+	c.Conn.Close()
 }

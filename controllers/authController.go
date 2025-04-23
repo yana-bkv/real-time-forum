@@ -36,7 +36,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
 	err = repositories.CreateUser(database.DB, &user)
 	if err != nil {
-		if err.Error() == "email already taken" {
+		if err.Error() == "email or username already taken" {
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}

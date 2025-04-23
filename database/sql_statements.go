@@ -7,7 +7,7 @@ func SqlUserDb(action string) string {
 		sqlAction = `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		username TEXT NOT NULL,
+		username TEXT UNIQUE NOT NULL,
 		email TEXT UNIQUE NOT NULL,
 		password TEXT NOT NULL
 	);`

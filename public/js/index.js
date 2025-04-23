@@ -20,15 +20,29 @@ import MessengerHandler from './websocket/WebsocketHandler.js';
 
 import FetchComments from './handlers/comment/CommentHandler.js';
 
-const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
+const pathToRegex = path => {
+    if (path instanceof RegExp) return path;
+    return new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "([^/]+)") + "$");
+};
 
 const getParams = match => {
     const values = match.result.slice(1);
-    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result => result[1]);
 
-    return Object.fromEntries(keys.map((key,i) => {
-        return [key,values[i]];
-    }));
+    // Case 1: string path with colon syntax
+    if (typeof match.route.path === "string") {
+        const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result => result[1]);
+        return Object.fromEntries(keys.map((key, i) => [key, values[i]]));
+    }
+
+    // Case 2: regex path (e.g. /^\/ws\/([^\/]+)\/([^\/]+)$/)
+    if (match.route.path instanceof RegExp) {
+        return {
+            user: values[0],
+            peer: values[1]
+        };
+    }
+
+    return {};
 };
 
 export const NavigateTo = url => {
@@ -57,7 +71,7 @@ const router = async () => {
         { path: "/user", view: UserAbout },
         { path: "/users", view: UsersList },
         { path: "/create-post", view: CreatePost },
-        { path: "/messenger", view: MessengerPage },
+        { path: /^\/ws\/([^\/]+)\/([^\/]+)$/, view: MessengerPage },
     ];
 
     const potentialRoutes = routes.map(route => {
