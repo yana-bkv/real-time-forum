@@ -53,6 +53,12 @@ nav a {
     padding: 10px;
 }
 
+nav a:hover {
+    color: antiquewhite;
+    background-color: #494545;
+    border: 2px solid antiquewhite;
+}
+
 form {
     max-width: 400px;
     margin: 0 auto;
@@ -88,12 +94,15 @@ button:hover {
 .post-item {
     width: 30vw;
     border: 1px solid antiquewhite;
+    border-radius: 10px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
     margin: 20px 30px;
 }
 
 .post-item h3:hover {
-    color: #e1d3bf;
+    color: #494545;
+    text-shadow: 2px 2px 3px antiquewhite, -2px -2px 3px antiquewhite;
     cursor: pointer;
 }
 
@@ -165,4 +174,30 @@ button:hover {
     display: block;
     margin-top:3vh;
     margin-bottom:3vh;
+}
+
+/*MESSENGER*/
+#messengerBody input {
+    width: auto;
+    display: inline;
+    margin-top: 10px;
+}
+
+#messengerBody form {
+    max-width: 100%;
+}
+
+/*USERS PAGE*/
+.user-item a {
+    text-decoration: none;
+    color: #ead0ab;
+}
+
+.user-item a:hover {
+    text-decoration: underline;
+    color: #e1d3bf;
+}
+
+.user-item {
+    padding: 10px;
 }

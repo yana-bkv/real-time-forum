@@ -8,18 +8,18 @@ import (
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		return true // allow connection to all path
 	},
 }
 
 func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID string) {
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil) // switch http to ws
 	if err != nil {
 		log.Println("Upgrade error:", err)
 		return
 	}
 
-	client := &Client{
+	client := &Client{ // create instance of a client by interface
 		hub:    hub,
 		conn:   conn,
 		send:   make(chan []byte, 256),

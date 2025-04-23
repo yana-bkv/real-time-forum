@@ -18,6 +18,7 @@ export default async function showUsers(element) {
                     <p>User email: ${user.email}</p>
                     <p>User id: ${user.id}</p>
                     <p>Online status: </p>
+                    <a href="/${user.username}">Send a message</a>
                 `;
             userElement.querySelector(".user-name").addEventListener("click", (event) => {
                 event.stopPropagation(); // Prevent bubbling up if needed

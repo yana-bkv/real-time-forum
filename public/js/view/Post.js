@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { checkAuth, IsAuthenticated } from "./isAuthenticatedUser.js";
+import { authService } from "../helpers/AuthServiceCheck.js";
 
 export default class extends AbstractView {
     constructor(params) {
@@ -8,9 +8,8 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
-        await checkAuth();
-        console.log(IsAuthenticated);
-        if (IsAuthenticated) {
+        const isAuthenticated = await authService.checkAuth();
+        if (isAuthenticated) {
             return `
                 <div class="post-block">
                 <h1>Post</h1>

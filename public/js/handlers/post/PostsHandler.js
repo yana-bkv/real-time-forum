@@ -10,7 +10,6 @@ export default async function postsFeed(element){
 
         const result = await api.getPosts();
 
-
         element.innerHTML = "";
 
         result.forEach(post => {

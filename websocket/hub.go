@@ -3,14 +3,14 @@ package websocket
 import "github.com/gorilla/websocket"
 
 type Client struct {
-	hub    *Hub
-	conn   *websocket.Conn
-	send   chan []byte
-	userID string // или int, если хочешь
+	hub    *Hub            // which room
+	conn   *websocket.Conn // connection
+	send   chan []byte     // channel
+	userID string          // или int, если хочешь
 }
 
 type Hub struct {
-	clients    map[*Client]bool
+	clients    map[*Client]bool // who is in the room
 	broadcast  chan []byte
 	register   chan *Client
 	unregister chan *Client

@@ -1,11 +1,12 @@
-import PostsForm from './views/Posts.js';
-import PostForm from './views/Post.js';
-import LoginForm from './views/Login.js';
-import RegisterForm from './views/Register.js';
-import UserAbout from './views/User.js';
-import UsersList from "./views/UsersList.js";
-import WelcomePage from './views/WelcomePage.js';
-import CreatePost from './views/CreatePost.js';
+import PostsForm from './view/Posts.js';
+import PostForm from './view/Post.js';
+import LoginForm from './view/Login.js';
+import RegisterForm from './view/Register.js';
+import UserAbout from './view/User.js';
+import UsersList from "./view/UsersList.js";
+import WelcomePage from './view/WelcomePage.js';
+import CreatePost from './view/CreatePost.js';
+import MessengerPage from './view/MessengerView.js';
 
 import LoginHandler from './handlers/auth/LoginHandler.js';
 import RegisterHandler from './handlers/auth/RegisterHandler.js';
@@ -15,6 +16,7 @@ import UserHandler from './handlers/user/UserHandler.js';
 import UsersHandler from './handlers/user/UsersHandler.js';
 import LogoutHandler from './handlers/auth/LogoutHandler.js';
 import CreatePostHandler from "./handlers/post/CreatePostHandler.js";
+import MessengerHandler from './websocket/WebsocketHandler.js';
 
 import FetchComments from './handlers/comment/CommentHandler.js';
 
@@ -55,6 +57,7 @@ const router = async () => {
         { path: "/user", view: UserAbout },
         { path: "/users", view: UsersList },
         { path: "/create-post", view: CreatePost },
+        { path: "/messenger", view: MessengerPage },
     ];
 
     const potentialRoutes = routes.map(route => {
@@ -99,6 +102,7 @@ const handlers = [
     { id: "feed", handler: PostsHandler, flag: "posts" },
     { id: "separatePostItem", handler: PostHandler, flag: "post", extra: FetchComments },
     { id: "usersList", handler: UsersHandler, flag: "users" },
+    { id: "messengerForm", handler: MessengerHandler },
 ];
 
 // Универсальная функция подключения обработчиков
