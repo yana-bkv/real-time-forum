@@ -9,14 +9,20 @@ import (
 	"strconv"
 )
 
-func CreateUser(db *sql.DB, user *models.User) error {
+type userRepository struct{}
+
+func NewUserRepository() UserRepository {
+	return &userRepository{}
+}
+
+func (r *userRepository) Create(user *models.User) error {
 	sqlStmt := database.SqlUserDb("createUser")
 
 	if user.Username == "" {
 		return errors.New("username is required")
 	}
 
-	result, err := db.Exec(sqlStmt, user.Username, user.Email, user.Password)
+	result, err := database.DB.Exec(sqlStmt, user.Username, user.Email, user.Password)
 	if err != nil {
 		if isDuplicateEmailError(err) {
 			return errors.New("email already taken")

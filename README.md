@@ -41,7 +41,6 @@ add tags
 show comments correctly
 
 tests
-messenger
 
 docker 
 documentation
@@ -51,4 +50,29 @@ documentation
 и готово!!! почти...
 основная часть ))
 
+* HTTP Request
+* ↓
+* Controller (UserController)
+* ↓
+* Repository (UserRepository)
+* ↓
+* Database (SQLite, etc.)
+
+
+[Браузер клиента]
+⬇ (сообщение через WebSocket)
+
+[Hub (центральный менеджер всех подключений)]
+⬇ (обрабатывает сообщение)
+
+[Handler функции клиента]
+⬇ (вызов сервиса для бизнес-логики)
+
+[Service слой]
+⬇ (сохраняет сообщение)
+
+[Repository слой]
+⬇ (вставка в базу данных)
+
+[SQLite / Другая БД]
 

@@ -98,14 +98,25 @@ func SqlLikeDb(action string) string {
 	return sqlAction
 }
 
-func SqlGetData(action string) string {
+func SqlMessageDb(action string) string {
 	var sqlAction string
 	switch action {
-	case "getUserPosts":
-		sqlAction = `SELECT * FROM users u JOIN posts p ON u.id = p.author_id`
-	case "getUserPostsComments":
-	case "getUserPostsLikes":
-	case "getPostsLikes":
+	case "createTable":
+		sqlAction = `
+	CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    receiver TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);`
+	case "saveMessage":
+		sqlAction = `INSERT INTO likes (sender_name, receiver_name, content) VALUES (?, ?)`
+	case "getMessage":
+		sqlAction = `SELECT sender, receiver, content, created_at
+        FROM messages
+        WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)
+        ORDER BY created_at ASC`
 	}
 	return sqlAction
 }

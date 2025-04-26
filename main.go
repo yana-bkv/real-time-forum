@@ -14,6 +14,7 @@ import (
 func main() {
 	// connect db
 	database.ConnectDB()
+	defer database.CloseDB()
 
 	frontendPort := ":3000"
 	backendPort := ":8080"
@@ -51,7 +52,7 @@ func main() {
 			frontendHandler.ServeHTTP(w, r)
 		}
 	})
-	
+
 	// Start the frontend server
 	fmt.Println("Frontend server running on http://localhost" + frontendPort)
 	log.Fatal(http.ListenAndServe(frontendPort, nil))

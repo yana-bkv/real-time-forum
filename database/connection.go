@@ -45,4 +45,18 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Error creating like table", err, sqlStmtLike)
 	}
+
+	// Create message table
+	sqlStmtMessage := SqlMessageDb("createTable")
+	_, err = db.Exec(sqlStmtMessage)
+	if err != nil {
+		log.Fatal("Error creating like table", err, sqlStmtMessage)
+	}
+}
+
+// Функция для закрытия базы данных, когда приложение завершит работу
+func CloseDB() {
+	if err := DB.Close(); err != nil {
+		log.Fatal("Error closing database:", err)
+	}
 }
