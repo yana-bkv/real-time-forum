@@ -1,51 +1,52 @@
 package controllers
 
 import (
-	"database/sql"
-	"fmt"
 	"github.com/gorilla/mux"
 	"jwt-authentication/helpers"
-	"jwt-authentication/models"
-	"jwt-authentication/repositories"
+	"jwt-authentication/services"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type PostController struct {
-	postRepo repositories.PostRepository
+	postService services.PostService
 }
 
-func NewPostController(postRepo repositories.PostRepository) *PostController {
-	return &PostController{postRepo: postRepo}
+func NewPostController(postService services.PostService) *PostController {
+	return &PostController{postService: postService}
 }
 
 func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
-	// Decode JSON request body
 	err := DecodeJson(r, w, &data)
 	if err != nil {
 		return
 	}
 
-	timeNow := time.Now()
 	authorId, err := strconv.Atoi(helpers.GetUserId(w, r))
 	if err != nil {
 		http.Error(w, "Invalid request payload for post", http.StatusBadRequest)
+	}
+
+	post, err := c.postService.Create(authorId, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	post := models.Post{
-		Title:    data["title"],
-		Body:     data["body"],
-		Category: "",
-		AuthorId: authorId,
-		Time:     timeNow.Format("2006-01-02 15:04:05"),
+	err = EncodeJson(w, post)
+	if err != nil {
+		return
 	}
+}
 
-	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = c.postRepo.Create(&post)
+func (c *PostController) GetPost(w http.ResponseWriter, r *http.Request) {
+	// Get ID from query parameters
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+
+	post, err := c.postService.Get(idStr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -58,43 +59,12 @@ func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *PostController) GetPost(w http.ResponseWriter, r *http.Request) {
-	// Get ID from query parameters
-	vars := mux.Vars(r)
-	idStr := vars["id"]
-
-	// Fetch post from database
-	post, err := c.postRepo.GetPostById(idStr)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Post not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err, idStr)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	// Encode response as JSON
-	err = EncodeJson(w, post)
-	if err != nil {
-		return
-	}
-}
-
 func (c *PostController) GetPosts(w http.ResponseWriter, r *http.Request) {
-	// Fetch post from database
-	posts, err := c.postRepo.GetAllPosts()
+	posts, err := c.postService.GetAll()
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Post not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err, posts)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	// Encode response as JSON
 	err = EncodeJson(w, posts)
 	if err != nil {
@@ -106,17 +76,10 @@ func (c *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["id"]
-	fmt.Println(idStr)
 
-	// Fetch post from database
-	err := c.postRepo.Delete(idStr)
+	err := c.postService.Delete(idStr)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Post not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err, idStr)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

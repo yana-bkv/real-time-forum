@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"jwt-authentication/controllers"
 	"jwt-authentication/repositories"
+	"jwt-authentication/services"
 	"jwt-authentication/websocket"
 	"net/http"
 )
@@ -15,9 +16,13 @@ func Setup(r *mux.Router) {
 	commentRepo := repositories.NewCommentRepository()
 	likeRepo := repositories.NewLikeRepository()
 
+	// Initialize services
+	authService := services.NewAuthService(userRepo)
+	postService := services.NewPostService(postRepo)
+
 	// Initialize controllers
-	authController := controllers.NewAuthController(userRepo)
-	postController := controllers.NewPostController(postRepo)
+	authController := controllers.NewAuthController(authService)
+	postController := controllers.NewPostController(postService)
 	commentController := controllers.NewCommentController(commentRepo)
 	likeController := controllers.NewLikeController(likeRepo)
 

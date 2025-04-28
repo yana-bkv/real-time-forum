@@ -1,57 +1,38 @@
 package controllers
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
-	"jwt-authentication/models"
-	"jwt-authentication/repositories"
+	"jwt-authentication/services"
 	"net/http"
-	"strconv"
-	"time"
 )
 
-// SecretKey for jwt token
-const SecretKey = "secret"
-
 type AuthController struct {
-	userRepo repositories.UserRepository
+	authService services.AuthService
 }
 
-func NewAuthController(userRepo repositories.UserRepository) *AuthController {
-	return &AuthController{userRepo: userRepo}
+func NewAuthController(authService services.AuthService) *AuthController {
+	return &AuthController{authService: authService}
 }
 
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
-	// Decode JSON request body
 	err := DecodeJson(r, w, data)
 	if err != nil {
 		return
 	}
 
-	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
-	user := models.User{
-		Username: data["username"],
-		Email:    data["email"],
-		Password: password,
-	}
-
-	err = c.userRepo.Create(&user)
+	err = c.authService.Register(data)
 	if err != nil {
 		if err.Error() == "email or username already taken" {
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	// Encode response as JSON
 	err = EncodeJson(w, "Success")
 	if err != nil {
 		return
@@ -67,52 +48,13 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if data["username"] == "" && data["email"] == "" {
-		fmt.Println(data)
-		http.Error(w, "username or email is required", http.StatusUnauthorized)
-		return
-	}
-
-	user, err := c.userRepo.GetUserByUsername(data["username"])
+	cookie, err := c.authService.Login(data)
 	if err != nil {
-		user, err = c.userRepo.GetUserByEmail(data["email"])
-		if err != nil {
-			http.Error(w, "Email not found", http.StatusNotFound)
-			return
-		}
-	}
-
-	if user.Id == 0 {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data["password"])); err != nil {
-		http.Error(w, "Incorrect password", http.StatusBadRequest)
-		return
-	}
-
-	// Create token
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    strconv.Itoa(int(user.Id)),
-		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-	})
-	token, err := claims.SignedString([]byte(SecretKey))
-	if err != nil {
-		http.Error(w, "Error creating token", http.StatusInternalServerError)
-	}
-
-	// Create cookie
-	cookie := http.Cookie{
-		Name:     "jwt",
-		Value:    token,
-		SameSite: http.SameSiteLaxMode,
-		Path:     "/",
-		Expires:  time.Now().Add(time.Hour * 24),
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, &cookie)
+	http.SetCookie(w, cookie)
 
 	// Encode response as JSON
 	err = EncodeJson(w, "Success")
@@ -128,19 +70,10 @@ func (c *AuthController) GetAuthUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := jwt.ParseWithClaims(cookie.Value, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SecretKey), nil
-	})
+	user, err := c.authService.GetAuthUser(cookie)
 	if err != nil {
-		http.Error(w, "Error creating token", http.StatusUnauthorized)
-	}
-	claims := token.Claims.(*jwt.StandardClaims)
-
-	// Put user info to user variable from database
-	// token has user id and it finds user by its id
-	user, err := c.userRepo.GetUserById(claims.Issuer)
-	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
+		return
 	}
 
 	// Encode response as JSON
@@ -151,32 +84,18 @@ func (c *AuthController) GetAuthUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
-	cookie := &http.Cookie{
-		Name:     "jwt",
-		Value:    "",
-		Path:     "/",
-		Expires:  time.Now().Add(-time.Hour),
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	}
+	cookie := c.authService.Logout()
 	http.SetCookie(w, cookie)
 	json.NewEncoder(w).Encode("Success logout")
 }
 
 func (c *AuthController) GetUsers(w http.ResponseWriter, r *http.Request) {
-	// Fetch post from database
-	users, err := c.userRepo.GetAllUsers()
+	users, err := c.authService.GetAllUsers()
 	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Post not found", http.StatusNotFound)
-		} else {
-			fmt.Println(err, users)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-		}
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	// Encode response as JSON
 	err = EncodeJson(w, users)
 	if err != nil {
 		return
