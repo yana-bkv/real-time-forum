@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"database/sql"
 	"errors"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
@@ -40,9 +39,9 @@ func (r *userRepository) Create(user *models.User) error {
 	return nil
 }
 
-func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
+func (r *userRepository) GetUserByEmail(email string) (*models.User, error) {
 	sqlStmt := database.SqlUserDb("getUserByEmail")
-	row := db.QueryRow(sqlStmt, email)
+	row := database.DB.QueryRow(sqlStmt, email)
 
 	var user models.User
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
@@ -53,9 +52,9 @@ func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 	return &user, nil
 }
 
-func GetUserByUsername(db *sql.DB, username string) (*models.User, error) {
+func (r *userRepository) GetUserByUsername(username string) (*models.User, error) {
 	sqlStmt := database.SqlUserDb("getUserByUsername")
-	row := db.QueryRow(sqlStmt, username)
+	row := database.DB.QueryRow(sqlStmt, username)
 
 	var user models.User
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
@@ -66,14 +65,14 @@ func GetUserByUsername(db *sql.DB, username string) (*models.User, error) {
 	return &user, nil
 }
 
-func GetUserById(db *sql.DB, id string) (*models.User, error) {
+func (r *userRepository) GetUserById(id string) (*models.User, error) {
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		log.Fatal("Invalid ID format:", err)
 	}
 
 	sqlStmt := database.SqlUserDb("getUserById")
-	row := db.QueryRow(sqlStmt, intID)
+	row := database.DB.QueryRow(sqlStmt, intID)
 
 	var user models.User
 	err = row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
@@ -84,9 +83,9 @@ func GetUserById(db *sql.DB, id string) (*models.User, error) {
 	return &user, nil
 }
 
-func GetAllUsers(db *sql.DB) ([]models.User, error) {
+func (r *userRepository) GetAllUsers() ([]models.User, error) {
 	sqlStmt := database.SqlUserDb("getAllUsers")
-	rows, err := db.Query(sqlStmt)
+	rows, err := database.DB.Query(sqlStmt)
 	if err != nil {
 		return nil, err
 	}

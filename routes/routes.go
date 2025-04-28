@@ -3,31 +3,44 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"jwt-authentication/controllers"
+	"jwt-authentication/repositories"
 	"jwt-authentication/websocket"
 	"net/http"
 )
 
 func Setup(r *mux.Router) {
-	r.HandleFunc("/api/register", controllers.Register).Methods("POST")
-	r.HandleFunc("/api/login", controllers.Login).Methods("POST")
-	r.HandleFunc("/api/logout", controllers.Logout).Methods("POST")
+	// Initialize repositories
+	userRepo := repositories.NewUserRepository()
+	postRepo := repositories.NewPostRepository()
+	commentRepo := repositories.NewCommentRepository()
+	likeRepo := repositories.NewLikeRepository()
 
-	r.HandleFunc("/api/user", controllers.GetAuthUser).Methods("GET") // Authed user
+	// Initialize controllers
+	authController := controllers.NewAuthController(userRepo)
+	postController := controllers.NewPostController(postRepo)
+	commentController := controllers.NewCommentController(commentRepo)
+	likeController := controllers.NewLikeController(likeRepo)
+
+	r.HandleFunc("/api/register", authController.Register).Methods("POST")
+	r.HandleFunc("/api/login", authController.Login).Methods("POST")
+	r.HandleFunc("/api/logout", authController.Logout).Methods("POST")
+
+	r.HandleFunc("/api/user", authController.GetAuthUser).Methods("GET") // Authed user
 	//r.HandleFunc("/api/user/{id}", controllers.GetUserById).Methods("GET")
-	r.HandleFunc("/api/users", controllers.GetUsers).Methods("GET")
+	r.HandleFunc("/api/users", authController.GetUsers).Methods("GET")
 
-	r.HandleFunc("/api/post", controllers.CreatePost).Methods("POST")
-	r.HandleFunc("/api/post/{id}", controllers.GetPost).Methods("GET")
-	r.HandleFunc("/api/posts", controllers.GetPosts).Methods("GET")
-	r.HandleFunc("/api/post/{id}", controllers.DeletePost).Methods("DELETE")
+	r.HandleFunc("/api/post", postController.Create).Methods("POST")
+	r.HandleFunc("/api/post/{id}", postController.GetPost).Methods("GET")
+	r.HandleFunc("/api/posts", postController.GetPosts).Methods("GET")
+	r.HandleFunc("/api/post/{id}", postController.Delete).Methods("DELETE")
 
-	r.HandleFunc("/api/post/{id}/comment", controllers.CreateComment).Methods("POST")
-	r.HandleFunc("/api/post/{id}/comments", controllers.GetCommentsByPostId).Methods("GET")
-	r.HandleFunc("/api/post/{id}/comment/{cId}", controllers.DeleteComment).Methods("DELETE")
+	r.HandleFunc("/api/post/{id}/comment", commentController.Create).Methods("POST")
+	r.HandleFunc("/api/post/{id}/comments", commentController.GetCommentsByPostId).Methods("GET")
+	r.HandleFunc("/api/post/{id}/comment/{cId}", commentController.Delete).Methods("DELETE")
 
-	r.HandleFunc("/api/post/{id}/like", controllers.AddLike).Methods("POST")
-	r.HandleFunc("/api/post/{id}/likes", controllers.GetLikes).Methods("GET")
-	r.HandleFunc("/api/post/{id}/like/{lId}", controllers.DeleteLike).Methods("DELETE")
+	r.HandleFunc("/api/post/{id}/like", likeController.AddLikeToPost).Methods("POST")
+	r.HandleFunc("/api/post/{id}/likes", likeController.GetLikesByPostId).Methods("GET")
+	r.HandleFunc("/api/post/{id}/like/{lId}", likeController.Delete).Methods("DELETE")
 
 	// websocket
 	r.HandleFunc("/ws/{user}/{peer}", websocket.ServeWs)

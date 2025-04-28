@@ -1,17 +1,22 @@
 package repositories
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"jwt-authentication/database"
 	"jwt-authentication/models"
 )
 
-func AddLike(db *sql.DB, like *models.Like) error {
+type likeRepository struct{}
+
+func NewLikeRepository() LikeRepository {
+	return &likeRepository{}
+}
+
+func (l *likeRepository) CreateLike(like *models.Like) error {
 	sqlStmt := database.SqlLikeDb("addLike")
 
-	result, err := db.Exec(sqlStmt, like.PostId, like.AuthorId)
+	result, err := database.DB.Exec(sqlStmt, like.PostId, like.AuthorId)
 	if err != nil {
 		fmt.Println(err)
 		return errors.New("error adding like")
@@ -27,9 +32,9 @@ func AddLike(db *sql.DB, like *models.Like) error {
 	return nil
 }
 
-func GetLikes(db *sql.DB, likeByPostId int) (*[]models.Like, error) {
+func (l *likeRepository) GetLikesByPostId(likeByPostId int) (*[]models.Like, error) {
 	sqlStmt := database.SqlLikeDb("getLikesByPostId")
-	rows, err := db.Query(sqlStmt, likeByPostId)
+	rows, err := database.DB.Query(sqlStmt, likeByPostId)
 	if err != nil {
 		return nil, err
 	}
@@ -47,10 +52,10 @@ func GetLikes(db *sql.DB, likeByPostId int) (*[]models.Like, error) {
 	return &likes, nil
 }
 
-func DeleteLike(db *sql.DB, likeByPostId int) error {
+func (l *likeRepository) Delete(likeByPostId int) error {
 	sqlStmt := database.SqlLikeDb("deleteLike")
 
-	result, err := db.Exec(sqlStmt, likeByPostId)
+	result, err := database.DB.Exec(sqlStmt, likeByPostId)
 	if err != nil {
 		return errors.New("error deleting like")
 	}

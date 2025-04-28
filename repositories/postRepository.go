@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"jwt-authentication/database"
@@ -9,14 +8,20 @@ import (
 	"strconv"
 )
 
-func CreatePost(db *sql.DB, post *models.Post) error {
+type postRepository struct{}
+
+func NewPostRepository() PostRepository {
+	return &postRepository{}
+}
+
+func (c *postRepository) Create(post *models.Post) error {
 	sqlStmt := database.SqlPostDb("createPost")
 
 	if post.Title == "" && post.Body == "" {
 		return errors.New("title and body are required")
 	}
 
-	result, err := db.Exec(sqlStmt, post.Title, post.Body, post.Category, post.AuthorId, post.Time)
+	result, err := database.DB.Exec(sqlStmt, post.Title, post.Body, post.Category, post.AuthorId, post.Time)
 	if err != nil {
 		fmt.Println(err)
 		return errors.New("error creating post")
@@ -33,14 +38,14 @@ func CreatePost(db *sql.DB, post *models.Post) error {
 
 }
 
-func GetPostById(db *sql.DB, id string) (*models.Post, error) {
+func (c *postRepository) GetPostById(id string) (*models.Post, error) {
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		return nil, errors.New("invalid post ID")
 	}
 
 	sqlStmt := database.SqlPostDb("getPostById")
-	row := db.QueryRow(sqlStmt, intID)
+	row := database.DB.QueryRow(sqlStmt, intID)
 
 	var post models.Post
 	err = row.Scan(&post.Id, &post.Title, &post.Body, &post.AuthorId, &post.Time)
@@ -51,9 +56,9 @@ func GetPostById(db *sql.DB, id string) (*models.Post, error) {
 	return &post, nil
 }
 
-func GetAllPosts(db *sql.DB) ([]models.Post, error) {
+func (c *postRepository) GetAllPosts() ([]models.Post, error) {
 	sqlStmt := database.SqlPostDb("getAllPosts")
-	rows, err := db.Query(sqlStmt)
+	rows, err := database.DB.Query(sqlStmt)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +75,7 @@ func GetAllPosts(db *sql.DB) ([]models.Post, error) {
 	return posts, nil
 }
 
-func DeletePost(db *sql.DB, id string) error {
+func (c *postRepository) Delete(id string) error {
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		return errors.New("invalid post ID")
@@ -78,7 +83,7 @@ func DeletePost(db *sql.DB, id string) error {
 
 	sqlStmt := database.SqlPostDb("deletePost")
 
-	result, err := db.Exec(sqlStmt, intID)
+	result, err := database.DB.Exec(sqlStmt, intID)
 	if err != nil {
 		return errors.New("error deleting post")
 	}

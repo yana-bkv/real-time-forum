@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gorilla/mux"
-	"jwt-authentication/database"
+	"jwt-authentication/helpers"
 	"jwt-authentication/models"
 	"jwt-authentication/repositories"
 	"net/http"
@@ -12,7 +12,15 @@ import (
 	"time"
 )
 
-func CreatePost(w http.ResponseWriter, r *http.Request) {
+type PostController struct {
+	postRepo repositories.PostRepository
+}
+
+func NewPostController(postRepo repositories.PostRepository) *PostController {
+	return &PostController{postRepo: postRepo}
+}
+
+func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// Decode JSON request body
@@ -22,7 +30,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	timeNow := time.Now()
-	authorId, err := strconv.Atoi(GetUserId(w, r))
+	authorId, err := strconv.Atoi(helpers.GetUserId(w, r))
 	if err != nil {
 		http.Error(w, "Invalid request payload for post", http.StatusBadRequest)
 		return
@@ -37,7 +45,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = repositories.CreatePost(database.DB, &post)
+	err = c.postRepo.Create(&post)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -50,13 +58,13 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetPost(w http.ResponseWriter, r *http.Request) {
+func (c *PostController) GetPost(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 
 	// Fetch post from database
-	post, err := repositories.GetPostById(database.DB, idStr)
+	post, err := c.postRepo.GetPostById(idStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -74,9 +82,9 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetPosts(w http.ResponseWriter, r *http.Request) {
+func (c *PostController) GetPosts(w http.ResponseWriter, r *http.Request) {
 	// Fetch post from database
-	posts, err := repositories.GetAllPosts(database.DB)
+	posts, err := c.postRepo.GetAllPosts()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -94,14 +102,14 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request) {
+func (c *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 	fmt.Println(idStr)
 
 	// Fetch post from database
-	err := repositories.DeletePost(database.DB, idStr)
+	err := c.postRepo.Delete(idStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)

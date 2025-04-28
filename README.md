@@ -52,7 +52,9 @@ documentation
 
 * HTTP Request
 * ↓
-* Controller (UserController)
+* Controller (AuthController)
+* ↓
+* Service (AuthService)
 * ↓
 * Repository (UserRepository)
 * ↓

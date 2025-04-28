@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gorilla/mux"
-	"jwt-authentication/database"
+	"jwt-authentication/helpers"
 	"jwt-authentication/models"
 	"jwt-authentication/repositories"
 	"net/http"
@@ -12,7 +12,15 @@ import (
 	"time"
 )
 
-func CreateComment(w http.ResponseWriter, r *http.Request) {
+type CommentController struct {
+	commentRepo repositories.CommentRepository
+}
+
+func NewCommentController(commentRepo repositories.CommentRepository) *CommentController {
+	return &CommentController{commentRepo: commentRepo}
+}
+
+func (c *CommentController) Create(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// ID of a post where user adds comment
@@ -31,7 +39,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	timeNow := time.Now()
-	authorId, err := strconv.Atoi(GetUserId(w, r)) // Get authorized user who creates comment
+	authorId, err := strconv.Atoi(helpers.GetUserId(w, r)) // Get authorized user who creates comment
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
@@ -44,8 +52,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		Time:     timeNow.Format("2006-01-02 15:04:05"),
 	}
 
-	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = repositories.CreateComment(database.DB, &comment)
+	err = c.commentRepo.Create(&comment)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -58,7 +65,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetCommentsByPostId(w http.ResponseWriter, r *http.Request) {
+func (c *CommentController) GetCommentsByPostId(w http.ResponseWriter, r *http.Request) {
 	// ID of a post where user adds comment
 	vars := mux.Vars(r)
 	idStr := vars["id"]
@@ -69,7 +76,7 @@ func GetCommentsByPostId(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	comments, err := repositories.GetCommentsByPost(database.DB, id)
+	comments, err := c.commentRepo.GetCommentsByPost(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)
@@ -87,7 +94,7 @@ func GetCommentsByPostId(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteComment(w http.ResponseWriter, r *http.Request) {
+func (c *CommentController) Delete(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["cid"]
@@ -99,7 +106,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	err = repositories.DeleteComment(database.DB, id)
+	err = c.commentRepo.Delete(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)

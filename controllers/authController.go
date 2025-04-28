@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
-	"jwt-authentication/database"
 	"jwt-authentication/models"
 	"jwt-authentication/repositories"
 	"net/http"
@@ -14,10 +13,18 @@ import (
 	"time"
 )
 
-// for jwt token
+// SecretKey for jwt token
 const SecretKey = "secret"
 
-func Register(w http.ResponseWriter, r *http.Request) {
+type AuthController struct {
+	userRepo repositories.UserRepository
+}
+
+func NewAuthController(userRepo repositories.UserRepository) *AuthController {
+	return &AuthController{userRepo: userRepo}
+}
+
+func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// Decode JSON request body
@@ -33,8 +40,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	}
 
-	userRepo := repositories.NewUserRepository()
-	err = userRepo.Create(&user)
+	err = c.userRepo.Create(&user)
 	if err != nil {
 		if err.Error() == "email or username already taken" {
 			http.Error(w, err.Error(), http.StatusConflict)
@@ -52,7 +58,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
 	// Decode JSON request body
@@ -67,9 +73,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repositories.GetUserByUsername(database.DB, data["username"])
+	user, err := c.userRepo.GetUserByUsername(data["username"])
 	if err != nil {
-		user, err = repositories.GetUserByEmail(database.DB, data["email"])
+		user, err = c.userRepo.GetUserByEmail(data["email"])
 		if err != nil {
 			http.Error(w, "Email not found", http.StatusNotFound)
 			return
@@ -115,7 +121,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetAuthUser(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) GetAuthUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("jwt")
 	if err != nil {
 		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
@@ -132,7 +138,7 @@ func GetAuthUser(w http.ResponseWriter, r *http.Request) {
 
 	// Put user info to user variable from database
 	// token has user id and it finds user by its id
-	user, err := repositories.GetUserById(database.DB, claims.Issuer)
+	user, err := c.userRepo.GetUserById(claims.Issuer)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 	}
@@ -144,7 +150,7 @@ func GetAuthUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Logout(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Value:    "",
@@ -157,36 +163,9 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Success logout")
 }
 
-// Return user name
-func GetUserId(w http.ResponseWriter, r *http.Request) string {
-	cookie, err := r.Cookie("jwt")
-	if err != nil {
-		http.Error(w, "Unauthorized: You must be logged in to access this resource", http.StatusUnauthorized)
-		return ""
-	}
-
-	token, err := jwt.ParseWithClaims(cookie.Value, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SecretKey), nil
-	})
-	if err != nil {
-		http.Error(w, "Error creating token", http.StatusUnauthorized)
-	}
-	claims := token.Claims.(*jwt.StandardClaims)
-
-	//// Put user info to user variable from database
-	//// token has user id and it finds user by its id
-	//user, _ := database.GetUserById(database.DB, claims.Issuer)
-	//
-	//if err := json.NewEncoder(w).Encode(user); err != nil {
-	//	http.Error(w, "Error encoding response", http.StatusInternalServerError)
-	//}
-
-	return claims.Issuer
-}
-
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) GetUsers(w http.ResponseWriter, r *http.Request) {
 	// Fetch post from database
-	users, err := repositories.GetAllUsers(database.DB)
+	users, err := c.userRepo.GetAllUsers()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)

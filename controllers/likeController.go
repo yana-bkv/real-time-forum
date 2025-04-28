@@ -4,14 +4,22 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gorilla/mux"
-	"jwt-authentication/database"
+	"jwt-authentication/helpers"
 	"jwt-authentication/models"
 	"jwt-authentication/repositories"
 	"net/http"
 	"strconv"
 )
 
-func AddLike(w http.ResponseWriter, r *http.Request) {
+type LikeController struct {
+	likeRepo repositories.LikeRepository
+}
+
+func NewLikeController(likeRepo repositories.LikeRepository) *LikeController {
+	return &LikeController{likeRepo: likeRepo}
+}
+
+func (c *LikeController) AddLikeToPost(w http.ResponseWriter, r *http.Request) {
 	// ID of a post where user adds comment
 	vars := mux.Vars(r)
 	idStr := vars["id"]
@@ -21,10 +29,9 @@ func AddLike(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authorId, err := strconv.Atoi(GetUserId(w, r)) // Get authenticated user that puts like
+	authorId, err := strconv.Atoi(helpers.GetUserId(w, r))
 	if err != nil {
-		fmt.Println(err, authorId)
-		http.Error(w, "Invalid request payload for like", http.StatusBadRequest)
+		http.Error(w, "Invalid request payload for post", http.StatusBadRequest)
 		return
 	}
 
@@ -34,7 +41,7 @@ func AddLike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
-	err = repositories.AddLike(database.DB, &like)
+	err = c.likeRepo.CreateLike(&like)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -47,7 +54,7 @@ func AddLike(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetLikes(w http.ResponseWriter, r *http.Request) {
+func (c *LikeController) GetLikesByPostId(w http.ResponseWriter, r *http.Request) {
 	// ID of a post where user adds comment
 	vars := mux.Vars(r)
 	idStr := vars["id"]
@@ -58,7 +65,7 @@ func GetLikes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	likes, err := repositories.GetLikes(database.DB, id)
+	likes, err := c.likeRepo.GetLikesByPostId(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Like not found", http.StatusNotFound)
@@ -76,7 +83,7 @@ func GetLikes(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteLike(w http.ResponseWriter, r *http.Request) {
+func (c *LikeController) Delete(w http.ResponseWriter, r *http.Request) {
 	// Get ID from query parameters
 	vars := mux.Vars(r)
 	idStr := vars["lId"]
@@ -87,7 +94,7 @@ func DeleteLike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch post from database
-	err = repositories.DeleteLike(database.DB, id)
+	err = c.likeRepo.Delete(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Comment not found", http.StatusNotFound)
