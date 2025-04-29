@@ -20,7 +20,11 @@ type PostService interface {
 	Delete(postId string) error
 }
 
-type CommentService interface{}
+type CommentService interface {
+	Create(authorId int, postId int, data map[string]string) (*models.Comment, error)
+	GetCommentsByPost(postId int) ([]models.Comment, error)
+	Delete(postId int) error
+}
 
 type LikeService interface{}
 

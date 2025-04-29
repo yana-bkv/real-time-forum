@@ -19,11 +19,12 @@ func Setup(r *mux.Router) {
 	// Initialize services
 	authService := services.NewAuthService(userRepo)
 	postService := services.NewPostService(postRepo)
+	commentService := services.NewCommentServiceImpl(commentRepo)
 
 	// Initialize controllers
 	authController := controllers.NewAuthController(authService)
 	postController := controllers.NewPostController(postService)
-	commentController := controllers.NewCommentController(commentRepo)
+	commentController := controllers.NewCommentController(commentService)
 	likeController := controllers.NewLikeController(likeRepo)
 
 	r.HandleFunc("/api/register", authController.Register).Methods("POST")
