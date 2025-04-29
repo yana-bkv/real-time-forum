@@ -22,7 +22,7 @@ type PostService interface {
 
 type CommentService interface {
 	Create(authorId int, postId int, data map[string]string) (*models.Comment, error)
-	GetCommentsByPost(postId int) ([]models.Comment, error)
+	GetCommentsByPost(id int) (**[]models.Comment, error)
 	Delete(postId int) error
 }
 

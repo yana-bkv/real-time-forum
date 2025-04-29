@@ -12,7 +12,7 @@ type CommentServiceImpl struct {
 	commentRepo repositories.CommentRepository
 }
 
-func NewCommentServiceImpl(commentRepo repositories.CommentRepository) *CommentServiceImpl {
+func NewCommentService(commentRepo repositories.CommentRepository) *CommentServiceImpl {
 	return &CommentServiceImpl{commentRepo: commentRepo}
 }
 
@@ -34,7 +34,7 @@ func (c *CommentServiceImpl) Create(authorId int, postId int, data map[string]st
 	return &comment, nil
 }
 
-func (c *CommentServiceImpl) GetCommentsByPostId(id int) (**[]models.Comment, error) {
+func (c *CommentServiceImpl) GetCommentsByPost(id int) (**[]models.Comment, error) {
 	// Fetch post from database
 	comments, err := c.commentRepo.GetCommentsByPost(id)
 	if err != nil {

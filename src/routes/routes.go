@@ -19,7 +19,7 @@ func Setup(r *mux.Router) {
 	// Initialize services
 	authService := services.NewAuthService(userRepo)
 	postService := services.NewPostService(postRepo)
-	commentService := services.NewCommentServiceImpl(commentRepo)
+	commentService := services.NewCommentService(commentRepo)
 
 	// Initialize controllers
 	authController := controllers.NewAuthController(authService)
