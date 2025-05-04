@@ -17,7 +17,7 @@ func NewAuthController(authService services.AuthService) *AuthController {
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 
-	err := DecodeJson(r, w, data)
+	err := DecodeJson(r, w, &data)
 	if err != nil {
 		return
 	}

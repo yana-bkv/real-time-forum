@@ -11,9 +11,13 @@ var DB *sql.DB
 func ConnectDB() {
 	// Initialize db
 	var err error
-	db, err := sql.Open("sqlite3", "./sqlite.db")
+	db, err := sql.Open("sqlite3", "sqlite.db")
 	if err != nil {
 		log.Fatal("Error opening database:", err)
+	}
+
+	if err = db.Ping(); err != nil {
+		log.Fatal("Database connection test failed:", err)
 	}
 
 	DB = db
@@ -39,7 +43,7 @@ func ConnectDB() {
 		log.Fatal("Error creating comment table", err, sqlStmtComment)
 	}
 
-	// Create likes table
+	//Create likes table
 	sqlStmtLike := SqlLikeDb("createTable")
 	_, err = db.Exec(sqlStmtLike)
 	if err != nil {
@@ -50,7 +54,7 @@ func ConnectDB() {
 	sqlStmtMessage := SqlMessageDb("createTable")
 	_, err = db.Exec(sqlStmtMessage)
 	if err != nil {
-		log.Fatal("Error creating like table", err, sqlStmtMessage)
+		log.Fatal("Error creating message table", err, sqlStmtMessage)
 	}
 }
 

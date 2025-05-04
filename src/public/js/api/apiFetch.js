@@ -31,6 +31,7 @@ export async function apiFetch(url, options = {}) {
             result = await response.text(); // ← если не JSON, хотя это редко
         }
 
+        //console.log(response);
         if (!response.ok) {
             throw new Error(result.message || "Request failed.");
         }

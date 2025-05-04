@@ -108,10 +108,10 @@ func SqlMessageDb(action string) string {
     sender TEXT NOT NULL,
     receiver TEXT NOT NULL,
     content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT NOT NULL
 );`
 	case "saveMessage":
-		sqlAction = `INSERT INTO likes (sender_name, receiver_name, content) VALUES (?, ?)`
+		sqlAction = `INSERT INTO messages (sender, receiver, content, created_at) VALUES (?, ?, ?, ?)`
 	case "getMessage":
 		sqlAction = `SELECT sender, receiver, content, created_at
         FROM messages

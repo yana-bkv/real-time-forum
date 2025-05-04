@@ -15,17 +15,20 @@ func Setup(r *mux.Router) {
 	postRepo := repositories.NewPostRepository()
 	commentRepo := repositories.NewCommentRepository()
 	likeRepo := repositories.NewLikeRepository()
+	msgRepo := repositories.NewMessageRepository()
 
 	// Initialize services
 	authService := services.NewAuthService(userRepo)
 	postService := services.NewPostService(postRepo)
 	commentService := services.NewCommentService(commentRepo)
+	msgService := services.NewMessageService(msgRepo)
 
 	// Initialize controllers
 	authController := controllers.NewAuthController(authService)
 	postController := controllers.NewPostController(postService)
 	commentController := controllers.NewCommentController(commentService)
 	likeController := controllers.NewLikeController(likeRepo)
+	msgController := controllers.NewMessageController(msgService)
 
 	r.HandleFunc("/api/register", authController.Register).Methods("POST")
 	r.HandleFunc("/api/login", authController.Login).Methods("POST")
@@ -47,6 +50,8 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/post/{id}/like", likeController.AddLikeToPost).Methods("POST")
 	r.HandleFunc("/api/post/{id}/likes", likeController.GetLikesByPostId).Methods("GET")
 	r.HandleFunc("/api/post/{id}/like/{lId}", likeController.Delete).Methods("DELETE")
+
+	r.HandleFunc("/api/messages/{user}/{peer}", msgController.Get).Methods("GET")
 
 	// websocket
 	r.HandleFunc("/ws/{user}/{peer}", websocket.ServeWs)

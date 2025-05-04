@@ -200,3 +200,18 @@ button:hover {
     text-decoration: underline;
     color: #e1d3bf;
 }
+
+/*MESSENGER*/
+.msg-title {
+    font-weight: bold;
+}
+.msg-sender {
+    color: #a69a8c;
+}
+.msg-receiver {
+    color: #dfd3c9;
+}
+.msg-timestamp {
+    font-size: small;
+    font-style: italic;
+}

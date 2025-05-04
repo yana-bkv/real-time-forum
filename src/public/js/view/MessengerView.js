@@ -12,6 +12,7 @@ export default class extends AbstractView {
         if (isAuthenticated) {
             return `
                 <div id="messengerBody">
+                <div id="messengerHistory"></div>
                 <div id="log"></div>
                 <form id="messengerForm">
                     <input type="text" id="msg" size="64" autofocus />

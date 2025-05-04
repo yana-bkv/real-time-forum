@@ -28,4 +28,7 @@ type CommentService interface {
 
 type LikeService interface{}
 
-type MessageService interface{}
+type MessageService interface {
+	Save(sender, receiver, content string) (*models.Message, error)
+	Get(sender, receiver string) ([]models.Message, error)
+}

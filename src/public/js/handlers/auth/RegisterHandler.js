@@ -24,7 +24,7 @@ export default function registerFormHandler(element) {
             await api.registerUser(data);
             window.location.href = "/login";
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error register:", error);
         }
     });
     }

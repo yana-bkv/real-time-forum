@@ -18,6 +18,8 @@ type PostRepository interface {
 }
 
 type MessageRepository interface {
+	Save(message *models.Message) error
+	GetMsg(sender, receiver string) ([]models.Message, error)
 }
 
 type CommentRepository interface {

@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"log"
@@ -70,11 +69,12 @@ func sendMessageToBroadcast(c *Client, message []byte) error {
 	if receiver, ok := HubInstance.Clients[c.PeerID]; ok {
 		receiver.Send <- message
 		log.Printf("Message from %s to %s: %s", c.ID, c.PeerID, string(message))
-		return nil
 	} else {
-		log.Printf("Receiver %s not found in clients map", c.PeerID)
-		return fmt.Errorf("receiver not found")
+		log.Printf("Receiver %s is offline", c.PeerID)
+		//return fmt.Errorf("receiver not found")
 	}
+
+	return nil
 }
 
 func (c *Client) writePump() {
