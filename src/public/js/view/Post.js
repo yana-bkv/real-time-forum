@@ -14,8 +14,7 @@ export default class extends AbstractView {
                 <div class="post-block">
                 <h1>Post</h1>
                 <div id="separatePostItem"></div>
-                <button id="deletePost">Delete post</button>
-                
+               
                 <div id="comments-container"></div>
                 </div>`
         } else {

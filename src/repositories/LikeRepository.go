@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"jwt-authentication/database"
@@ -52,11 +53,12 @@ func (l *likeRepository) GetLikesByPostId(likeByPostId int) (*[]models.Like, err
 	return &likes, nil
 }
 
-func (l *likeRepository) Delete(likeByPostId int) error {
+func (l *likeRepository) Delete(userId, postId int) error {
 	sqlStmt := database.SqlLikeDb("deleteLike")
 
-	result, err := database.DB.Exec(sqlStmt, likeByPostId)
+	result, err := database.DB.Exec(sqlStmt, userId, postId)
 	if err != nil {
+		fmt.Println(err)
 		return errors.New("error deleting like")
 	}
 
@@ -70,4 +72,28 @@ func (l *likeRepository) Delete(likeByPostId int) error {
 	}
 
 	return nil
+}
+
+func (l *likeRepository) HasLiked(userID, likeByPostId int) (int, error) {
+	var count int
+	err := database.DB.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?", userID, likeByPostId).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (l *likeRepository) GetUserCount(postId int) (int, error) {
+	sqlStmt := database.SqlLikeDb("getUserCount")
+	var likeCount int
+
+	err := database.DB.QueryRow(sqlStmt, postId).Scan(&likeCount)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil // Если лайков нет, просто возвращаем 0
+		}
+		return 0, fmt.Errorf("error getting like count: %w", err)
+	}
+
+	return likeCount, nil
 }

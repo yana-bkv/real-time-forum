@@ -31,5 +31,7 @@ type CommentRepository interface {
 type LikeRepository interface {
 	CreateLike(like *models.Like) error
 	GetLikesByPostId(id int) (*[]models.Like, error)
-	Delete(likeByPostId int) error
+	Delete(postId, userId int) error
+	HasLiked(userID, likeByPostId int) (int, error)
+	GetUserCount(postId int) (int, error)
 }

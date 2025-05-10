@@ -49,7 +49,9 @@ func Setup(r *mux.Router) {
 
 	r.HandleFunc("/api/post/{id}/like", likeController.AddLikeToPost).Methods("POST")
 	r.HandleFunc("/api/post/{id}/likes", likeController.GetLikesByPostId).Methods("GET")
-	r.HandleFunc("/api/post/{id}/like/{lId}", likeController.Delete).Methods("DELETE")
+	r.HandleFunc("/api/post/{id}/likeCount", likeController.GetUserCount).Methods("GET")
+	r.HandleFunc("/api/post/{id}/like", likeController.Delete).Methods("DELETE")
+	r.HandleFunc("/api/post/{id}/hasLiked", likeController.HasLiked).Methods("GET")
 
 	r.HandleFunc("/api/messages/{user}/{peer}", msgController.Get).Methods("GET")
 

@@ -86,14 +86,16 @@ func SqlLikeDb(action string) string {
 	CREATE TABLE IF NOT EXISTS likes (
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		post_id INTEGER NOT NULL,
-		author_id INTEGER NOT NULL UNIQUE
+		user_id INTEGER NOT NULL
 );`
 	case "addLike":
-		sqlAction = `INSERT INTO likes (post_id, author_id) VALUES (?, ?)`
+		sqlAction = `INSERT INTO likes (post_id, user_id) VALUES (?, ?)`
 	case "getLikesByPostId":
-		sqlAction = `SELECT id, post_id, author_id FROM likes WHERE post_id = ?`
+		sqlAction = `SELECT id, post_id, user_id FROM likes WHERE post_id = ?`
 	case "deleteLike":
-		sqlAction = `DELETE FROM likes WHERE id = ?`
+		sqlAction = `DELETE FROM likes WHERE user_id = ? AND post_id = ?;`
+	case "getUserCount":
+		sqlAction = `SELECT COUNT(user_id) FROM likes WHERE post_id = ?`
 	}
 	return sqlAction
 }

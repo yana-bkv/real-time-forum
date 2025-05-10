@@ -1,5 +1,6 @@
 import {api} from '../../api/posts.js';
 import {api as apiUser} from "../../api/users.js";
+import {LikeHandler} from "../like/LikeHandler.js";
 
 export default async function postsFeed(element){
     if (!element) return;
@@ -20,7 +21,7 @@ export default async function postsFeed(element){
             postElement.innerHTML = `
                     <h3 class="post-title">${post.title}</h3>
                     <p>${post.body}</p>
-                    <p>${authorName}</p>
+                    <p>Author: ${authorName}</p>
                     <p>Categories ${post.category}</p>
                     <p>${post.time}</p> 
                 `;
@@ -29,8 +30,14 @@ export default async function postsFeed(element){
                 window.location.href = "/post/" + post.id;
             });
 
-            element.appendChild(postElement);
+            const like = async function () {
+                const likeBtn = await LikeHandler(post.id);
+                postElement.appendChild(likeBtn);
+                element.appendChild(postElement);
+            }
+            like();
         });
+
     } catch (error) {
         console.log(error);
         element.textContent = "Error fetching user";

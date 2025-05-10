@@ -201,6 +201,11 @@ button:hover {
     color: #e1d3bf;
 }
 
+/*COMMENTS*/
+#comments-container button {
+    padding: 5px;
+}
+
 /*MESSENGER*/
 .msg-title {
     font-weight: bold;
