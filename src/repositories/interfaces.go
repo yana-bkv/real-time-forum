@@ -17,6 +17,16 @@ type PostRepository interface {
 	Delete(id string) error
 }
 
+type CategoryRepository interface {
+	Create(category *models.Category) error
+	GetAllCategories() ([]models.Category, error)
+}
+
+type PostCategoryRepository interface {
+	Assign(postId, categoryId int) error
+	Remove(postId, categoryId int) error
+}
+
 type MessageRepository interface {
 	Save(message *models.Message) error
 	GetMsg(sender, receiver string) ([]models.Message, error)
