@@ -36,6 +36,20 @@ func ConnectDB() {
 		log.Fatal("Error creating post table", err, sqlStmtPost)
 	}
 
+	// Create category table
+	sqlStmtCategory := SqlCategoryDb("createTable")
+	_, err = db.Exec(sqlStmtCategory)
+	if err != nil {
+		log.Fatal("Error creating post table", err, sqlStmtCategory)
+	}
+
+	// Create post and category relation table
+	sqlStmtPostCategory := SqlPostCategoryDb("createTable")
+	_, err = db.Exec(sqlStmtPostCategory)
+	if err != nil {
+		log.Fatal("Error creating post table", err, sqlStmtPostCategory)
+	}
+
 	// Create comments table
 	sqlStmtComment := SqlCommentDb("createTable")
 	_, err = db.Exec(sqlStmtComment)
