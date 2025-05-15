@@ -13,6 +13,8 @@ func Setup(r *mux.Router) {
 	// Initialize repositories
 	userRepo := repositories.NewUserRepository()
 	postRepo := repositories.NewPostRepository()
+	categoryRepo := repositories.NewCategoryRepository()
+	postCategoryRepo := repositories.NewPostCategoryRepository()
 	commentRepo := repositories.NewCommentRepository()
 	likeRepo := repositories.NewLikeRepository()
 	msgRepo := repositories.NewMessageRepository()
@@ -26,6 +28,8 @@ func Setup(r *mux.Router) {
 	// Initialize controllers
 	authController := controllers.NewAuthController(authService)
 	postController := controllers.NewPostController(postService)
+	categoryController := controllers.NewCategoryController(categoryRepo)
+	postCategoryController := controllers.NewPostCategoryController(postCategoryRepo)
 	commentController := controllers.NewCommentController(commentService)
 	likeController := controllers.NewLikeController(likeRepo)
 	msgController := controllers.NewMessageController(msgService)
@@ -42,6 +46,16 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/post/{id}", postController.GetPost).Methods("GET")
 	r.HandleFunc("/api/posts", postController.GetPosts).Methods("GET")
 	r.HandleFunc("/api/post/{id}", postController.Delete).Methods("DELETE")
+
+	r.HandleFunc("/api/category", categoryController.Create).Methods("POST")
+	r.HandleFunc("/api/category/{id}", categoryController.Get).Methods("GET")
+	r.HandleFunc("/api/categories", categoryController.GetAll).Methods("GET")
+	r.HandleFunc("/api/category/{id}", categoryController.Delete).Methods("DELETE")
+
+	r.HandleFunc("/api/post/{id}/category", postCategoryController.Create).Methods("POST")
+	r.HandleFunc("/api/post/{id}/category/{id}", postCategoryController.Get).Methods("GET")
+	r.HandleFunc("/api/post/{id}/categories", postCategoryController.GetAll).Methods("GET")
+	r.HandleFunc("/api/post/{id}/category/{id}", postCategoryController.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/post/{id}/comment", commentController.Create).Methods("POST")
 	r.HandleFunc("/api/post/{id}/comments", commentController.GetCommentsByPostId).Methods("GET")

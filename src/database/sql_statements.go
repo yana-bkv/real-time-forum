@@ -57,12 +57,14 @@ func SqlPostDb(action string) string {
 func SqlCategoryDb(action string) string {
 	var sqlAction string
 	switch action {
-	case "createCategory":
+	case "createTable":
 		sqlAction = `
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     text TEXT UNIQUE NOT NULL
-)`
+);`
+	case "createCategory":
+		sqlAction = `INSERT INTO categories (text) VALUES (?)`
 	case "getCategoryById":
 		sqlAction = `SELECT id, text FROM categories WHERE id = ?`
 	}
@@ -72,12 +74,12 @@ CREATE TABLE IF NOT EXISTS categories (
 func SqlPostCategoryDb(action string) string {
 	var sqlAction string
 	switch action {
-	case "createPostCategory":
+	case "createTable":
 		sqlAction = `
 CREATE TABLE IF NOT EXISTS post_categories (
     post_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-)`
+    category_id INTEGER NOT NULL
+);`
 	}
 	return sqlAction
 }

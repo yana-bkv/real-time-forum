@@ -6,13 +6,20 @@ import (
 )
 
 type PostCategoryController struct {
-	postRepository repositories.CategoryRepository
+	postCategoryRepository repositories.PostCategoryRepository
 }
 
-func NewPostCategoryController(postRepository repositories.CategoryRepository) *PostCategoryController {
-	return &PostCategoryController{postRepository: postRepository}
+func NewPostCategoryController(postCategoryRepository repositories.PostCategoryRepository) *PostCategoryController {
+	return &PostCategoryController{postCategoryRepository: postCategoryRepository}
 }
 
 func (c *PostCategoryController) Create(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func (c *PostCategoryController) Get(w http.ResponseWriter, r *http.Request) {
+}
+func (c *PostCategoryController) GetAll(w http.ResponseWriter, r *http.Request) {
+}
+func (c *PostCategoryController) Delete(w http.ResponseWriter, r *http.Request) {
 }

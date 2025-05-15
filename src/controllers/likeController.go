@@ -42,7 +42,6 @@ func (c *LikeController) AddLikeToPost(w http.ResponseWriter, r *http.Request) {
 		AuthorId: authorId,
 	}
 
-	//database is package, CreateUser is function, DB is *sql.DB, &user is *models.User
 	err = c.likeRepo.CreateLike(&like)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

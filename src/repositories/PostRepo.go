@@ -35,7 +35,6 @@ func (c *postRepository) Create(post *models.Post) error {
 	post.Id = int(postID)
 
 	return nil
-
 }
 
 func (c *postRepository) GetPostById(id string) (*models.Post, error) {
