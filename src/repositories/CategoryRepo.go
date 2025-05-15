@@ -15,3 +15,7 @@ func (r *categoryRepository) Create(category *models.Category) error {
 func (r *categoryRepository) GetAllCategories() ([]models.Category, error) {
 	return nil, nil
 }
+
+func (r *categoryRepository) Delete(id string) error {
+	return nil
+}

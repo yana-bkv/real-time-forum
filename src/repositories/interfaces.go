@@ -20,6 +20,7 @@ type PostRepository interface {
 type CategoryRepository interface {
 	Create(category *models.Category) error
 	GetAllCategories() ([]models.Category, error)
+	Delete(id string) error
 }
 
 type PostCategoryRepository interface {
