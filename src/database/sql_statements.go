@@ -67,6 +67,10 @@ CREATE TABLE IF NOT EXISTS categories (
 		sqlAction = `INSERT INTO categories (text) VALUES (?)`
 	case "getCategoryById":
 		sqlAction = `SELECT id, text FROM categories WHERE id = ?`
+	case "getAllCategories":
+		sqlAction = `SELECT id, text FROM categories`
+	case "deleteCategory":
+		sqlAction = `DELETE FROM categories WHERE id = ?`
 	}
 	return sqlAction
 }

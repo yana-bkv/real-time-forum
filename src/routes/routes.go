@@ -53,9 +53,9 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/category/{id}", categoryController.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/post/{id}/category", postCategoryController.Create).Methods("POST")
-	r.HandleFunc("/api/post/{id}/category/{id}", postCategoryController.Get).Methods("GET")
+	r.HandleFunc("/api/post/{id}/category/{cid}", postCategoryController.Get).Methods("GET")
 	r.HandleFunc("/api/post/{id}/categories", postCategoryController.GetAll).Methods("GET")
-	r.HandleFunc("/api/post/{id}/category/{id}", postCategoryController.Delete).Methods("DELETE")
+	r.HandleFunc("/api/post/{id}/category/{cid}", postCategoryController.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/post/{id}/comment", commentController.Create).Methods("POST")
 	r.HandleFunc("/api/post/{id}/comments", commentController.GetCommentsByPostId).Methods("GET")

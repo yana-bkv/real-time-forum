@@ -22,20 +22,48 @@ func (r *categoryRepository) Create(category *models.Category) error {
 	if err != nil {
 		return err
 	}
-	//// Adds id from db to json data
-	//categoryID, err := result.LastInsertId()
-	//if err != nil {
-	//	return err
-	//}
-	//category.Id = int(categoryID)
 
 	return nil
 }
 
-func (r *categoryRepository) GetAllCategories() ([]models.Category, error) {
-	return nil, nil
+func (r *categoryRepository) GetById(id int) (*models.Category, error) {
+	sqlStmt := database.SqlCategoryDb("getCategoryById")
+	row := database.DB.QueryRow(sqlStmt, id)
+
+	var category models.Category
+	err := row.Scan(&category.Id, &category.Text)
+	if err != nil {
+		return nil, err
+	}
+
+	return &category, nil
 }
 
-func (r *categoryRepository) Delete(id string) error {
+func (r *categoryRepository) GetAllCategories() ([]models.Category, error) {
+	sqlStmt := database.SqlCategoryDb("getAllCategories")
+	rows, err := database.DB.Query(sqlStmt)
+	if err != nil {
+		return nil, err
+	}
+
+	var categories []models.Category
+	for rows.Next() {
+		var category models.Category
+		err := rows.Scan(&category.Id, &category.Text)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+
+	return categories, nil
+}
+
+func (r *categoryRepository) Delete(id int) error {
+	sqlStmt := database.SqlCategoryDb("deleteCategory")
+	_, err := database.DB.Exec(sqlStmt, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
