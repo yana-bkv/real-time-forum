@@ -54,6 +54,34 @@ func SqlPostDb(action string) string {
 	return sqlAction
 }
 
+func SqlCategoryDb(action string) string {
+	var sqlAction string
+	switch action {
+	case "createCategory":
+		sqlAction = `
+CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    text TEXT UNIQUE NOT NULL
+)`
+	case "getCategoryById":
+		sqlAction = `SELECT id, text FROM categories WHERE id = ?`
+	}
+	return sqlAction
+}
+
+func SqlPostCategoryDb(action string) string {
+	var sqlAction string
+	switch action {
+	case "createPostCategory":
+		sqlAction = `
+CREATE TABLE IF NOT EXISTS post_categories (
+    post_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+)`
+	}
+	return sqlAction
+}
+
 func SqlCommentDb(action string) string {
 	var sqlAction string
 	switch action {
