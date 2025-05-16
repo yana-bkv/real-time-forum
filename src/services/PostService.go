@@ -39,8 +39,6 @@ func (p *PostServiceImpl) Get(postId string) (*models.Post, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("Post not found")
-		} else {
-			return nil, errors.New("Database error")
 		}
 		return nil, err
 	}
@@ -63,8 +61,6 @@ func (p *PostServiceImpl) Delete(postId string) error {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New("Post not found")
-		} else {
-			return errors.New("Database error")
 		}
 		return err
 	}

@@ -86,7 +86,12 @@ func (c *AuthController) GetAuthUser(w http.ResponseWriter, r *http.Request) {
 func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie := c.authService.Logout()
 	http.SetCookie(w, cookie)
-	json.NewEncoder(w).Encode("Success logout")
+
+	if err := json.NewEncoder(w).Encode("Success logout"); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 func (c *AuthController) GetUsers(w http.ResponseWriter, r *http.Request) {

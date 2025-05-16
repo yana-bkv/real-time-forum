@@ -120,8 +120,6 @@ func (a *AuthServiceImpl) GetAllUsers() ([]models.User, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("User not found")
-		} else {
-			return nil, errors.New("Database error")
 		}
 		return nil, err
 	}
