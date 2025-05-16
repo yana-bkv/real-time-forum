@@ -81,9 +81,18 @@ func SqlPostCategoryDb(action string) string {
 	case "createTable":
 		sqlAction = `
 CREATE TABLE IF NOT EXISTS post_categories (
-    post_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL
+    post_id INTEGER,
+    category_id INTEGER,
+ 	PRIMARY KEY (post_id, category_id),
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );`
+	case "assignCategoryToPost":
+		sqlAction = `INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)`
+	case "unassignCategoryFromPost":
+		sqlAction = `DELETE FROM post_categories WHERE category_id = ? AND post_id = ?`
+	case "unassignCategoryFromAllPosts":
+		sqlAction = `DELETE FROM post_categories WHERE category_id = ?`
 	}
 	return sqlAction
 }

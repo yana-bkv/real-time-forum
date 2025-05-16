@@ -25,8 +25,9 @@ type CategoryRepository interface {
 }
 
 type PostCategoryRepository interface {
-	Assign(postId, categoryId int) error
-	Remove(postId, categoryId int) error
+	Assign(postCategory *models.PostCategory) error
+	//GetCategoryByPostId(postId int) ([]models.PostCategory, error)
+	Remove(categoryId, postId int) error
 }
 
 type MessageRepository interface {
