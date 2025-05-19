@@ -33,12 +33,12 @@ forum-messenger/
 ###  Локально (без Docker)
 
 ```bash
-go run cmd/app/main.go
+go run main.go
 ```
 ### С докер
 
 ```bash
 docker build -t forum-app .
-docker run -p 8080:8080 forum-app
+docker run -p 8080:8080 -p 3000:3000 forum-app
 ```
 
