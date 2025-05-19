@@ -1,9 +1,28 @@
 import {api} from '../../api/posts.js';
+import {CategoryHandler, showCategoryForm, createCategory} from "../tag/CategoryHandler.js";
 
-export default function CreatePostHandler(element) {
-    if (!element) return;
+let isCreatePostHandlerInitialized = false;
+
+export default async function CreatePostHandler(element) {
+    if (!element || isCreatePostHandlerInitialized) return;
+    isCreatePostHandlerInitialized = true;
 
     console.log("Post form detected, adding event listener!");
+
+    const showCategoryBtn = document.getElementById("show-category-button");
+    const saveCategoryBtn = document.getElementById("save-category-button");
+
+    if (showCategoryBtn && saveCategoryBtn) {
+        showCategoryBtn.addEventListener("click", showCategoryForm);
+        saveCategoryBtn.addEventListener("click", createCategory);
+    }
+
+    console.log("Вызываем CategoryHandler...");
+    try {
+        await CategoryHandler();
+    } catch (error) {
+        console.log(error);
+    }
 
     element.addEventListener("submit", async function (event) {
         event.preventDefault(); // Prevent page reload

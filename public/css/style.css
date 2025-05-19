@@ -70,6 +70,18 @@ label, input {
     width: 100%;
     padding: 10px;
 }
+
+#category-list label, #category-list, #category-list input  {
+    width: auto;
+    display: inline-block;
+
+}
+
+#category-list label {
+    margin: 5px;
+    padding: 5px;
+}
+
 button {
     margin-top: 20px;
     padding: 10px 20px;
