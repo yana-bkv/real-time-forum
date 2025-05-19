@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: go-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    image: node:18
+    container_name: static-frontend
+    working_dir: /app/public
+    volumes:
+      - ./backend/public:/app/public
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "npm install -g http-server &&
+             http-server -p 3000"
