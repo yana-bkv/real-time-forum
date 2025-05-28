@@ -104,6 +104,8 @@ button:hover {
 }
 
 .post-item {
+    text-align: left;
+
     width: 30vw;
     border: 1px solid antiquewhite;
     border-radius: 10px;
@@ -144,7 +146,7 @@ button:hover {
     font-size: 16px;
 }
 
-#separatePostItem .post-categories {
+.post-categories {
     font-size: 16px;
     display: inline-block;
     border: 1px solid antiquewhite;

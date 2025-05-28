@@ -1,6 +1,7 @@
 import {api} from '../../api/posts.js';
 import {api as apiUser} from "../../api/users.js";
 import {LikeHandler} from "../like/LikeHandler.js";
+import {api as apiTag} from "../../api/tag.js";
 
 export default async function postsFeed(element){
     if (!element) return;
@@ -13,8 +14,14 @@ export default async function postsFeed(element){
 
         element.innerHTML = "";
 
-        result.forEach(post => {
+        for (const post of result) {
             const authorName = userMap[post.author_id] || 'Unknown';
+            // Get tags by post id
+            const tags = await apiTag.getTagsByPostId(post.id);
+            let categoryHTML = "";
+            tags.forEach(tag => {
+                categoryHTML += `<span class="post-categories">${tag}</span>`;
+            });
 
             const postElement = document.createElement("div");
             postElement.classList.add("post-item");
@@ -22,7 +29,7 @@ export default async function postsFeed(element){
                     <h3 class="post-title">${post.title}</h3>
                     <p>${post.body}</p>
                     <p>Author: ${authorName}</p>
-                    <p>Categories ${post.category}</p>
+                    ${categoryHTML}
                     <p>${post.time}</p> 
                 `;
             postElement.querySelector(".post-title").addEventListener("click", (event) => {
@@ -36,7 +43,7 @@ export default async function postsFeed(element){
                 element.appendChild(postElement);
             }
             like();
-        });
+        };
 
     } catch (error) {
         console.log(error);

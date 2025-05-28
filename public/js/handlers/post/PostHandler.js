@@ -16,7 +16,6 @@ export default async function postElement(element){
     }
     // Get tags by post id
     const tags = await apiTag.getTagsByPostId(postId);
-    console.log(tags);
 
     try {
         const users = await apiUser.getUsers();
@@ -26,11 +25,16 @@ export default async function postElement(element){
 
         const authorName = userMap[post.author_id] || 'Unknown';
 
+        let categoryHTML = "";
+        tags.forEach(tag => {
+            categoryHTML += `<p class="post-categories">${tag}</p>`;
+        });
+
         element.innerHTML = `
             <h3>${post.title}</h3>
             <p>${post.body}</p>
             <p class="post-author">${authorName}</p>
-<!--            <p class="post-categories">${tags}</p>    -->
+             ${categoryHTML}
             <p class="post-time">${post.time}</p>
         `;
 
