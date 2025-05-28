@@ -52,6 +52,56 @@ func (c *PostCategoryController) Create(w http.ResponseWriter, r *http.Request) 
 func (c *PostCategoryController) Get(w http.ResponseWriter, r *http.Request) {
 }
 func (c *PostCategoryController) GetAll(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	postId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	tags, err := c.postCategoryRepository.GetTagByPostId(postId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Encode response as JSON
+	err = EncodeJson(w, tags)
+	if err != nil {
+		return
+	}
 }
+
+func (c *PostCategoryController) GetTagByPostId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	postId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	categoryIDs, err := c.postCategoryRepository.GetTagByPostId(postId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	categoryNames, err := c.postCategoryRepository.GetCategoryNamesByIDs(categoryIDs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Пример: вернуть просто массив названий
+	names := []string{}
+	for _, id := range categoryIDs {
+		if text, ok := categoryNames[id]; ok {
+			names = append(names, text)
+		}
+	}
+
+	_ = EncodeJson(w, names)
+}
+
 func (c *PostCategoryController) Delete(w http.ResponseWriter, r *http.Request) {
 }

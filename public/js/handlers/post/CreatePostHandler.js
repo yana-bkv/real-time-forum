@@ -1,5 +1,6 @@
 import {api} from '../../api/posts.js';
 import {CategoryHandler, showCategoryForm, createCategory} from "../tag/CategoryHandler.js";
+import {AssignTagToPostHandler} from "../tag/TagToPostHandler.js";
 
 let isCreatePostHandlerInitialized = false;
 
@@ -39,10 +40,15 @@ export default async function CreatePostHandler(element) {
 
         try {
             const result = await api.createPost(data);
-            console.log("Post successfully created", result);
+            console.log(`Post successfully created ${result.id}`);
+            await AssignTagToPostHandler(result.id);
             window.location.href = "/posts";
         } catch (error) {
             console.error("Error:", error);
         }
     });
+}
+
+function takeLastPostId() {
+
 }

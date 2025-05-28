@@ -5,7 +5,8 @@ export const api = {
     createTag: (data) => apiFetch(`${BASE_URL}/api/category`, {method: "POST", body: data}),
     getTags: () => apiFetch(`${BASE_URL}/api/categories`),
     getTagById: (id) => apiFetch(`${BASE_URL}/api/category/${id}`),
-    deleteTagById: (id) => apiFetch(`${BASE_URL}/api/category/${id}`, {method: "DELETE"})
+    deleteTagById: (id) => apiFetch(`${BASE_URL}/api/category/${id}`, {method: "DELETE"}),
 
-    //getCategoryByPostId(id) => apiFetch(`${BASE_URL}/api/category/${id}`, {method: "GET"})
+    addCategoriesToPostId:(id, data) => apiFetch(`${BASE_URL}/api/post/${id}/category`, {method: "POST", body: data}),
+    getTagsByPostId: (id) => apiFetch(`${BASE_URL}/api/post/${id}/categories`),
 }

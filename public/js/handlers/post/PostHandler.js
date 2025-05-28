@@ -1,5 +1,6 @@
 import {api} from '../../api/posts.js';
 import {api as apiUser } from '../../api/users.js';
+import {api as apiTag} from '../../api/tag.js';
 import {CreateCommentSection} from '../comment/CreateCommentHandler.js';
 import {authService} from "../../helpers/AuthServiceCheck.js";
 
@@ -13,6 +14,9 @@ export default async function postElement(element){
         element.textContent = "Invalid post ID";
         return;
     }
+    // Get tags by post id
+    const tags = await apiTag.getTagsByPostId(postId);
+    console.log(tags);
 
     try {
         const users = await apiUser.getUsers();
@@ -26,7 +30,7 @@ export default async function postElement(element){
             <h3>${post.title}</h3>
             <p>${post.body}</p>
             <p class="post-author">${authorName}</p>
-            <p class="post-categories">Categories ${post.category}</p>    
+<!--            <p class="post-categories">${tags}</p>    -->
             <p class="post-time">${post.time}</p>
         `;
 

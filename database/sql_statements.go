@@ -93,6 +93,8 @@ CREATE TABLE IF NOT EXISTS post_categories (
 		sqlAction = `DELETE FROM post_categories WHERE category_id = ? AND post_id = ?`
 	case "unassignCategoryFromAllPosts":
 		sqlAction = `DELETE FROM post_categories WHERE category_id = ?`
+	case "getTagByPostId":
+		sqlAction = `SELECT category_id FROM post_categories WHERE post_id = ?`
 	}
 	return sqlAction
 }
