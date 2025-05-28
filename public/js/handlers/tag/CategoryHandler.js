@@ -42,6 +42,5 @@ export async function createCategory() {
     option.selected = true; // автоматически выбираем её
     select.appendChild(option);
 
-    // Скрываем форму
-    document.getElementById('new-category-form').style.display = 'none';
+    window.location.href = '/create-post';
 }

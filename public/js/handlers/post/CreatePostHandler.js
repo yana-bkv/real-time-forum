@@ -48,7 +48,3 @@ export default async function CreatePostHandler(element) {
         }
     });
 }
-
-function takeLastPostId() {
-
-}

@@ -34,7 +34,7 @@ func (c *PostCategoryController) Create(w http.ResponseWriter, r *http.Request) 
 
 	postCategory := models.PostCategory{
 		PostID:      id,
-		CategoryIDs: data["category_ids"],
+		CategoryIDs: data["category_id"],
 	}
 
 	err = c.postCategoryRepository.Assign(&postCategory)
