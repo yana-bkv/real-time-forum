@@ -1,6 +1,5 @@
 import {api} from '../../api/posts.js';
 import {CategoryHandler, showCategoryForm, createCategory} from "../tag/CategoryHandler.js";
-import {AssignTagToPostHandler} from "../tag/TagToPostHandler.js";
 
 let isCreatePostHandlerInitialized = false;
 
@@ -33,15 +32,18 @@ export default async function CreatePostHandler(element) {
         const title = document.getElementById("postTitle").value;
         const postBody = document.getElementById("postBody").value;
 
+        const selectedCategories = Array.from(document.querySelectorAll(".category-checkbox:checked"))
+            .map(checkbox => parseInt(checkbox.value));
+
         const data = {
             title: title,
-            body: postBody
+            body: postBody,
+            category_ids: selectedCategories
         };
 
         try {
-            const result = await api.createPost(data);
-            console.log(`Post successfully created ${result.id}`);
-            await AssignTagToPostHandler(result.id);
+            await api.createPost(data);
+            console.log("Post form submitted!");
             window.location.href = "/posts";
         } catch (error) {
             console.error("Error:", error);

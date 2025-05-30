@@ -11,6 +11,7 @@ export async function CategoryHandler() {
         label.classList.add("category-checkbox");
 
         const checkbox = document.createElement("input");
+        checkbox.classList.add("category-checkbox");
         checkbox.type = "checkbox";
         checkbox.name = "categories";
         checkbox.value = tag.id;
