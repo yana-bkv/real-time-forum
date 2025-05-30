@@ -14,27 +14,27 @@ func NewPostRepository() PostRepository {
 	return &postRepository{}
 }
 
-func (c *postRepository) Create(post *models.Post) error {
+func (c *postRepository) Create(post *models.Post) (int, error) {
 	sqlStmt := database.SqlPostDb("createPost")
 
 	if post.Title == "" && post.Body == "" {
-		return errors.New("title and body are required")
+		return 0, errors.New("title and body are required")
 	}
 
-	result, err := database.DB.Exec(sqlStmt, post.Title, post.Body, post.Category, post.AuthorId, post.Time)
+	result, err := database.DB.Exec(sqlStmt, post.Title, post.Body, post.AuthorId, post.Time)
 	if err != nil {
 		fmt.Println(err)
-		return errors.New("error creating post")
+		return 0, errors.New("error creating post")
 	}
 
 	// Adds id from db to json data
 	postID, err := result.LastInsertId()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	post.Id = int(postID)
 
-	return nil
+	return post.Id, nil
 }
 
 func (c *postRepository) GetPostById(id string) (*models.Post, error) {
@@ -96,5 +96,24 @@ func (c *postRepository) Delete(id string) error {
 		return errors.New("post not found") // No post deleted
 	}
 
+	return nil
+}
+
+// Assigning categories to post
+func (c *postRepository) Assign(postCategory *models.PostCategory) error {
+	sqlStmt := database.SqlPostCategoryDb("assignCategoryToPost")
+
+	stmt, err := database.DB.Prepare(sqlStmt)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, catID := range postCategory.CategoryIDs {
+		_, err := stmt.Exec(postCategory.PostID, catID)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

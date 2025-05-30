@@ -14,7 +14,7 @@ type AuthService interface {
 }
 
 type PostService interface {
-	Create(authorId int, data map[string]string) (*models.Post, error)
+	Create(authorId int, req *models.CreatePostRequest) (*models.Post, error)
 	Get(postId string) (*models.Post, error)
 	GetAll() ([]models.Post, error)
 	Delete(postId string) error

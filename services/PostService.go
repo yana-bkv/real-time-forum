@@ -16,21 +16,29 @@ func NewPostService(postRepo repositories.PostRepository) *PostServiceImpl {
 	return &PostServiceImpl{postRepo: postRepo}
 }
 
-func (p *PostServiceImpl) Create(authorId int, data map[string]string) (*models.Post, error) {
+func (p *PostServiceImpl) Create(authorId int, req *models.CreatePostRequest) (*models.Post, error) {
 	timeNow := time.Now()
 
 	post := models.Post{
-		Title:    data["title"],
-		Body:     data["body"],
-		Category: "",
+		Title:    req.Title,
+		Body:     req.Body,
 		AuthorId: authorId,
 		Time:     timeNow.Format("2006-01-02 15:04:05"),
 	}
 
-	err := p.postRepo.Create(&post)
+	postID, err := p.postRepo.Create(&post)
 	if err != nil {
 		return nil, errors.New("Unable to create post")
 	}
+
+	err = p.postRepo.Assign(&models.PostCategory{
+		PostID:      postID,
+		CategoryIDs: req.CategoryIDs,
+	})
+	if err != nil {
+		return nil, errors.New("Unable to create categories to post")
+	}
+
 	return &post, nil
 }
 

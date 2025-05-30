@@ -11,10 +11,12 @@ type UserRepository interface {
 }
 
 type PostRepository interface {
-	Create(user *models.Post) error
+	Create(user *models.Post) (int, error)
 	GetAllPosts() ([]models.Post, error)
 	GetPostById(id string) (*models.Post, error)
 	Delete(id string) error
+
+	Assign(postCategory *models.PostCategory) error
 }
 
 type CategoryRepository interface {
@@ -25,7 +27,7 @@ type CategoryRepository interface {
 }
 
 type PostCategoryRepository interface {
-	Assign(postCategory *models.PostCategory) error
+	//Assign(postCategory *models.PostCategory) error
 	Remove(categoryId, postId int) error
 	GetTagByPostId(postId int) ([]int, error)
 	GetCategoryNamesByIDs(ids []int) (map[int]string, error)

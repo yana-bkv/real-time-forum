@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"jwt-authentication/helpers"
+	"jwt-authentication/models"
 	"jwt-authentication/services"
 	"net/http"
 	"strconv"
@@ -17,10 +19,10 @@ func NewPostController(postService services.PostService) *PostController {
 }
 
 func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
-	var data map[string]string
-
-	err := DecodeJson(r, w, &data)
+	var req models.CreatePostRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -29,7 +31,7 @@ func (c *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload for post", http.StatusBadRequest)
 	}
 
-	post, err := c.postService.Create(authorId, data)
+	post, err := c.postService.Create(authorId, &req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

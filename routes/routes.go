@@ -52,7 +52,7 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/api/categories", categoryController.GetAll).Methods("GET")
 	r.HandleFunc("/api/category/{id}", categoryController.Delete).Methods("DELETE")
 
-	r.HandleFunc("/api/post/{id}/category", postCategoryController.Create).Methods("POST")
+	//r.HandleFunc("/api/tags-to-new-post", postCategoryController.Create).Methods("POST")
 	r.HandleFunc("/api/post/{id}/category/{cid}", postCategoryController.Get).Methods("GET")
 	r.HandleFunc("/api/post/{id}/categories", postCategoryController.GetTagByPostId).Methods("GET")
 	r.HandleFunc("/api/post/{id}/category/{cid}", postCategoryController.Delete).Methods("DELETE")

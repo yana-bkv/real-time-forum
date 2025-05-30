@@ -36,12 +36,11 @@ func SqlPostDb(action string) string {
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		body TEXT UNIQUE NOT NULL,
-		category TEXT,
 		author_id INTEGER NOT NULL,
 		time TEXT NOT NULL
 );`
 	case "createPost":
-		sqlAction = `INSERT INTO posts (title, body, category, author_id, time) VALUES (?, ?, ?, ?, ?)`
+		sqlAction = `INSERT INTO posts (title, body, author_id, time) VALUES (?, ?, ?, ?)`
 	case "getPostById":
 		sqlAction = `SELECT id, title, body, author_id, time FROM posts WHERE id = ?`
 	case "getAllPosts":
