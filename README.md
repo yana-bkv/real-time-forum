@@ -1,41 +1,42 @@
 #  Forum & Messenger App
 
-Форум с приватными чатами между пользователями. Бэкенд на Go, фронтенд встроен прямо в приложение (папка `public/`).  
-Поддерживает регистрацию, создание тем, ответы и личные сообщения через WebSocket.
+A forum with private chats between users.
+The backend is written in Go, and the frontend is embedded directly into the app (in the public/ folder).
+Supports user registration, topic creation, replies, and private messaging via WebSocket.
 
 ---
 
-##  Стек технологий
+## Tech Stack
 
-- Go (Gorilla, WebSocket)
-- SQLite
-- Чистый JavaScript
-- Docker
+	•	Go (Gorilla, WebSocket)
+	•	SQLite
+	•	Vanilla JavaScript
+	•	Docker
 
 ---
 
-## 📁 Структура проекта
+## Project Structure
 ```
 forum-messenger/
-├── cmd/app/           # main.go — точка входа
+├── cmd/app/           # main.go — entry point
 ├── internal/
-│   ├── auth/          # регистрация, логин, токены
-│   ├── forum/         # темы и посты
-│   ├── messenger/     # чаты через WebSocket
-│   └── db/            # соединение и миграции
-├── public/            # фронтенд (HTML, CSS, JS)
-├── go.mod             # зависимости
-├── Dockerfile         # сборка контейнера
+│   ├── auth/          # registration, login, tokens
+│   ├── forum/         # topics and posts
+│   ├── messenger/     # private chats via WebSocket
+│   └── db/            # connection and migrations
+├── public/            # frontend (HTML, CSS, JS)
+├── go.mod             # dependencies
+├── Dockerfile         # container build
 └── README.md
 ```
-##  Как запустить
+##  How to Run
 
-###  Локально (без Docker)
+### Locally (without Docker)
 
 ```bash
 go run main.go
 ```
-### С докер
+### With Docker
 
 ```bash
 docker build -t forum-app .
